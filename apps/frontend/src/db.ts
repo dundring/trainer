@@ -156,11 +156,14 @@ export const addDatapoint = async (
             }
           : undefined,
       });
+
       const heartRate = dataPoint.heartRate ?? 0;
       const maxHeartRate = workoutState.maxHeartRate ?? 0;
 
       if (maxHeartRate < heartRate) {
-        return setMaxHeartRate(heartRate);
+        await db.workoutState.update(workoutState.workoutNumber, {
+          maxHeartRate: heartRate,
+        });
       }
     }
   );
@@ -183,14 +186,6 @@ export const initWorkoutstate = async () => {
     if (!state) {
       return db.workoutState.add(defaultWorkoutState);
     }
-  });
-};
-
-const setMaxHeartRate = async (heartRate: number) => {
-  const state = await getWorkoutState();
-
-  return db.workoutState.update(state.workoutNumber, {
-    maxHeartRate: heartRate,
   });
 };
 
