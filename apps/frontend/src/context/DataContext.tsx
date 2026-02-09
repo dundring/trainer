@@ -62,9 +62,9 @@ export const DataContextProvider = ({ clockWorker, children }: Props) => {
 
   const hasValidData = trackedData.length > 0;
 
-  const accumulatedTimeRef = useLiveRef(0);
-  const pausedTimeRef = useLiveRef(0);
-  const lastElapsedRef = useLiveRef(0);
+  const accumulatedTimeRef = React.useRef(0);
+  const pausedTimeRef = React.useRef(0);
+  const lastElapsedRef = React.useRef(0);
   const powerRef = useLiveRef(power);
   const heartRateRef = useLiveRef(heartRate);
   const cadenceRef = useLiveRef(cadence);
@@ -166,6 +166,12 @@ export const DataContextProvider = ({ clockWorker, children }: Props) => {
       syncResistance();
     }
 
+    // Initialize refs from current elapsed time when resuming a previous session
+    if (state === 'not_started' && workoutState.elapsedTime > 0) {
+      pausedTimeRef.current = workoutState.elapsedTime;
+      lastElapsedRef.current = workoutState.elapsedTime;
+    }
+
     startActiveWorkout();
     clockWorker.postMessage('startClockTimer');
     setState('running');
@@ -175,6 +181,8 @@ export const DataContextProvider = ({ clockWorker, children }: Props) => {
     syncResistance,
     startActiveWorkout,
     trackedData.length,
+    state,
+    workoutState.elapsedTime,
   ]);
 
   const stop = React.useCallback(async () => {
@@ -205,14 +213,6 @@ export const DataContextProvider = ({ clockWorker, children }: Props) => {
     logEvent,
     workoutState.elapsedTime,
   ]);
-
-  // Initialize paused time when workout state loads with existing elapsed time
-  React.useEffect(() => {
-    if (state === 'not_started' && workoutState.elapsedTime > 0) {
-      pausedTimeRef.current = workoutState.elapsedTime;
-      lastElapsedRef.current = workoutState.elapsedTime;
-    }
-  }, [workoutState.elapsedTime, state]);
 
   return (
     <DataContext.Provider
