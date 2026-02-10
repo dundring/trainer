@@ -72,9 +72,10 @@ export const DataContextProvider = ({ clockWorker, children }: Props) => {
   const dataTick = React.useCallback(
     async (delta: number) => {
       try {
-        if (accumulatedTimeRef.current > 0) {
-          await db.addElapsedTime(accumulatedTimeRef.current);
-          accumulatedTimeRef.current = 0;
+        const timeToFlush = accumulatedTimeRef.current;
+        accumulatedTimeRef.current = 0;
+        if (timeToFlush > 0) {
+          await db.addElapsedTime(timeToFlush);
         }
 
         const currentHeartRate = heartRateRef.current;
@@ -194,10 +195,11 @@ export const DataContextProvider = ({ clockWorker, children }: Props) => {
 
     clockWorker.postMessage('stopClockTimer');
 
-    if (accumulatedTimeRef.current > 0) {
+    const timeToFlush = accumulatedTimeRef.current;
+    accumulatedTimeRef.current = 0;
+    if (timeToFlush > 0) {
       try {
-        await db.addElapsedTime(accumulatedTimeRef.current);
-        accumulatedTimeRef.current = 0;
+        await db.addElapsedTime(timeToFlush);
       } catch (error) {
         console.error('Failed to flush elapsed time on stop:', error);
       }
