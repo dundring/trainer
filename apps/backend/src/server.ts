@@ -3,6 +3,7 @@ import * as express from 'express';
 import * as WebSocket from 'ws';
 import cors from 'cors';
 import http from 'http';
+import path from 'path';
 import { initRedis } from './redis';
 import { initWebsockets } from './websocket';
 import router from './routes';
@@ -19,6 +20,13 @@ app.use(express.json());
 app.use(cors());
 
 app.use('/api', router);
+
+const frontendPath = path.join(__dirname, '../../frontend/dist');
+app.use(express.static(frontendPath));
+app.get('*', (_req, res, next) => {
+  if (_req.path.startsWith('/api')) return next();
+  res.sendFile(path.join(frontendPath, 'index.html'));
+});
 
 const httpServer = http.createServer(app);
 const wss = new WebSocket.Server({ server: httpServer, path: '/api' });
