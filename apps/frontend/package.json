@@ -10,7 +10,7 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@chakra-ui/react": "^2.8.1",
+    "@chakra-ui/react": "^3.35.0",
     "@dundring/utils": "*",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.14.0",
