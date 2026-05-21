@@ -9,7 +9,7 @@ permissions:
   packages: write
 
 jobs:
-  build:
+  build-and-push-image:
     name: Build, tag and push image
     runs-on: ubuntu-latest
     outputs:
@@ -70,3 +70,15 @@ jobs:
           body: ${{ steps.changelog.outputs.changes }}
           draft: false
           prerelease: false
+
+  deploy-to-dev:
+    name: Deploy to dev environment
+    needs:
+      - build-and-push-image
+    runs-on: ubuntu-latest
+    environment:
+      name: dev
+      url: https://trainer-dev.dundring.com
+    steps:
+      - name: Trigger Dokploy deployment
+        run: curl -s "${{ vars.DEPLOY_WEBHOOK_URL }}"
