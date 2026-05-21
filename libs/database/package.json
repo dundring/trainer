@@ -17,7 +17,7 @@
     "db:studio": "prisma studio"
   },
   "dependencies": {
-    "@prisma/client": "^6.2.1",
+    "@prisma/client": "^7.8.0",
     "lint-staged": "^13.0.3"
   },
   "devDependencies": {
