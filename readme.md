@@ -1,5 +1,8 @@
 ![](docs/logo.svg)
 
+> [!NOTE]
+> We're moving this repo from [sivertschou/dundring](https://github.com/sivertschou/dundring) to [dundring/trainer](https://github.com/dundring/trainer). The project will still be free and open source, but we're planning on moving this application application to a subdomain such as [trainer.dundring.com](https://dundring.com) and gather more services on [dundring.com](https://dundring.com)
+
 **[dundring.com](https://dundring.com) is an in-browser training application created to control and track your training with a smart bike trainer.**
 
 **dundring.com is available at [https://dundring.com](https://dundring.com) ⚡️**
