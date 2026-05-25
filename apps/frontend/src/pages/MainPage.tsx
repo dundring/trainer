@@ -19,6 +19,8 @@ import {
 import { Modals } from '../components/Modals/Modals';
 import { BottomBar } from '../components/BottomBar';
 import { Footer } from '../components/Footer';
+import { MigrationBanner } from '../components/MigrationBanner';
+import { useMigrationBannerDismissed } from '../hooks/useMigrationBanner';
 
 export const MainPage = () => {
   const { connect } = useWebsocket();
@@ -42,6 +44,8 @@ export const MainPage = () => {
   const feedbackModal = useFeedbackModal();
 
   const optionsModal = useOptionsModal();
+  const { dismissed: bannerDismissed, dismiss: dismissBanner } =
+    useMigrationBannerDismissed();
 
   React.useEffect(() => {
     const path = location.pathname.split('/')[1];
@@ -118,7 +122,8 @@ export const MainPage = () => {
           <Footer />
         </Stack>
       </Center>
-      <TopBar />
+      {!bannerDismissed && <MigrationBanner onDismiss={dismissBanner} />}
+      <TopBar topOffset={bannerDismissed ? '0' : '26px'} />
       <ActionBar />
       <Modals />
       <BottomBar />

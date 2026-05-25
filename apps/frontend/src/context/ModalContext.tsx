@@ -12,6 +12,7 @@ const ModalContext = React.createContext<{
   groupSessionModal: Modal;
   logModal: Modal;
   loginModal: Modal;
+  migrationModal: Modal;
   profileModal: Modal;
   welcomeMessageModal: Modal;
   workoutEditorModal: Modal;
@@ -25,6 +26,7 @@ export const ModalContextProvider = ({
 }) => {
   const logModal: Modal = useDisclosure();
   const loginModal: Modal = useDisclosure();
+  const migrationModal: Modal = useDisclosure();
   const profileModal: Modal = useDisclosure();
   const groupSessionModal: Modal = useDisclosure();
   const welcomeMessageModal: Modal = useDisclosure();
@@ -39,6 +41,7 @@ export const ModalContextProvider = ({
         groupSessionModal,
         logModal,
         loginModal,
+        migrationModal,
         profileModal,
         welcomeMessageModal,
         workoutEditorModal,
@@ -74,6 +77,16 @@ export const useLoginModal = () => {
     throw new Error('useLoginModal must be used within a ModalContextProvider');
   }
   return context.loginModal;
+};
+
+export const useMigrationModal = () => {
+  const context = React.useContext(ModalContext);
+  if (context === null) {
+    throw new Error(
+      'useMigrationModal must be used within a ModalContextProvider'
+    );
+  }
+  return context.migrationModal;
 };
 
 export const useProfileModal = () => {
