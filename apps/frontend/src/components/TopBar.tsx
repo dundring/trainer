@@ -17,7 +17,7 @@ const mainFontSize = ['xl', '3xl', '7xl'];
 const unitFontSize = ['l', '2xl', '4xl'];
 const secondaryFontSize = ['m', 'xl', '2xl'];
 
-export const TopBar = () => {
+export const TopBar = ({ topOffset = '0' }: { topOffset?: string }) => {
   const { cadence, currentResistance } = useSmartTrainer();
   const { heartRate } = useHeartRateMonitor();
   const { activeWorkout } = useActiveWorkout();
@@ -43,7 +43,7 @@ export const TopBar = () => {
     <Center
       width="100%"
       position="fixed"
-      top="0"
+      top={topOffset}
       lineHeight="1"
       pt="2"
       textShadow={textShadow}
