@@ -163,6 +163,7 @@ export const useSmartTrainerInterface = (): SmartTrainerInterface => {
         optionalServices: ['fitness_machine'],
       })
       .catch((_e) => {
+        console.log(_e);
         dispatch({ type: 'reset' });
         return null;
       });
@@ -223,6 +224,7 @@ export const useSmartTrainerInterface = (): SmartTrainerInterface => {
       device.removeEventListener('gattserverdisconnected', onDisconnected);
       device.addEventListener('gattserverdisconnected', onDisconnected);
     } catch (e) {
+      console.log(e);
       logEvent(
         'Could not connect to device as Fitness Machine. Trying to connect to cycling power.'
       );
