@@ -55,37 +55,38 @@ export const TopBar = ({ topOffset = '0' }: { topOffset?: string }) => {
         <Center width="100%">
           <Grid width="90%" templateColumns="repeat(3, 1fr)">
             <Stack>
-              <Center color={hrColor}>
+              <Center hidden={!options.showHeartRateCurrent} color={hrColor}>
                 <Text fontSize={mainFontSize}>
                   {heartRate !== null ? heartRate : '0'}
                 </Text>
                 <Text fontSize={unitFontSize}>bpm</Text>
               </Center>
               {maxHeartRate && (
-                <Text color={hrColor} fontSize={secondaryFontSize}>
+                <Text
+                  hidden={!options.showHeartRateMax}
+                  color={hrColor}
+                  fontSize={secondaryFontSize}
+                >
                   Max: {maxHeartRate} bpm
                 </Text>
               )}
             </Stack>
             <Stack spacing="0">
-              <Text fontSize={secondaryFontSize}>
+              <Text hidden={!options.showSpeed} fontSize={secondaryFontSize}>
                 {((3600 * speed) / 1000).toFixed(1)} km/h
               </Text>
-              <Text fontSize={secondaryFontSize}>
+              <Text hidden={!options.showDistance} fontSize={secondaryFontSize}>
                 {flooredDistance.toFixed(1)} km
               </Text>
-              ? (
               <Text
-                visibility={
-                  options.showTotalDurationTimer ? 'visible' : 'hidden'
-                }
+                hidden={!options.showTotalDurationTimer}
                 fontSize={hasRemainingTime ? secondaryFontSize : mainFontSize}
               >
                 {secondsToHoursMinutesAndSecondsString(secondsElapsed)}
               </Text>
               {hasRemainingTime ? (
                 <Text
-                  visibility={options.showIntervalTimer ? 'visible' : 'hidden'}
+                  hidden={!hasRemainingTime || !options.showIntervalTimer}
                   fontSize={mainFontSize}
                 >
                   {secondsToHoursMinutesAndSecondsString(remainingTime)}
@@ -94,10 +95,13 @@ export const TopBar = ({ topOffset = '0' }: { topOffset?: string }) => {
               )
             </Stack>
             <Stack spacing="0" color={powerColor}>
-              <Text fontSize={secondaryFontSize}>
+              <Text
+                hidden={!options.showPowerTarget}
+                fontSize={secondaryFontSize}
+              >
                 {!isFreeMode ? `@${currentResistance}w` : 'Free mode'}
               </Text>
-              <Center>
+              <Center hidden={!options.showPowerCurrent}>
                 <Text fontSize={mainFontSize}>{smoothedPower || '0'}</Text>
                 <Text fontSize={unitFontSize}>w</Text>
               </Center>
