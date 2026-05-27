@@ -27,28 +27,23 @@ interface Data {
 interface UpdateTimeSeconds {
   type: 'UPDATE_TIME_SECONDS';
   value: string;
-  setWorkoutPart: (workoutPart: WorkoutPart) => void;
 }
 interface UpdateTimeMinutes {
   type: 'UPDATE_TIME_MINUTES';
   value: string;
-  setWorkoutPart: (workoutPart: WorkoutPart) => void;
 }
 interface UpdateTime {
   type: 'UPDATE_TIME';
-  setWorkoutPart: (workoutPart: WorkoutPart) => void;
 }
 interface UpdatePowerWatt {
   type: 'UPDATE_POWER_WATT';
   value: string;
   ftp: number;
-  setWorkoutPart: (workoutPart: WorkoutPart) => void;
 }
 interface UpdatePowerPercent {
   type: 'UPDATE_POWER_PERCENT';
   value: string;
   ftp: number;
-  setWorkoutPart: (workoutPart: WorkoutPart) => void;
 }
 
 interface FtpUpdated {
@@ -83,17 +78,6 @@ export const WorkoutIntervalInput = ({
   ftp,
   isLastWorkoutPart,
 }: Props) => {
-  const updateWorkout = (
-    data: Data,
-    setWorkoutPart: (part: WorkoutPart) => void
-  ) => {
-    setWorkoutPart({
-      duration: data.seconds,
-      targetPower: data.power,
-      type: data.type,
-    });
-    return data;
-  };
   const reducer = (currentData: Data, action: DataAction): Data => {
     switch (action.type) {
       case 'UPDATE_TIME': {
@@ -109,7 +93,7 @@ export const WorkoutIntervalInput = ({
           seconds: duration,
         };
 
-        return updateWorkout(updatedData, action.setWorkoutPart);
+        return updatedData;
       }
 
       case 'UPDATE_TIME_SECONDS':
@@ -137,7 +121,7 @@ export const WorkoutIntervalInput = ({
           power: ftpPercentFromWatt(parsed, ftp),
         };
 
-        return updateWorkout(updatedData, action.setWorkoutPart);
+        return updatedData;
       }
 
       case 'UPDATE_POWER_PERCENT': {
@@ -159,7 +143,7 @@ export const WorkoutIntervalInput = ({
           power: parsed,
         };
 
-        return updateWorkout(updatedData, action.setWorkoutPart);
+        return updatedData;
       }
       case 'FTP_UPDATED': {
         return {
@@ -197,6 +181,19 @@ export const WorkoutIntervalInput = ({
     type: 'steady',
   });
 
+  React.useEffect(() => {
+    if (
+      workoutPart.duration !== data.seconds ||
+      workoutPart.targetPower !== data.power
+    ) {
+      setWorkoutPart({
+        duration: data.seconds,
+        targetPower: data.power,
+        type: data.type,
+      });
+    }
+  }, [data, setWorkoutPart]);
+
   const durationIsInvalid = false;
   const powerIsInvalid = data.power < 0;
 
@@ -215,13 +212,11 @@ export const WorkoutIntervalInput = ({
               dispatchDataUpdate({
                 type: 'UPDATE_TIME_MINUTES',
                 value: e.target.value,
-                setWorkoutPart,
               })
             }
             onBlur={() =>
               dispatchDataUpdate({
                 type: 'UPDATE_TIME',
-                setWorkoutPart,
               })
             }
           />
@@ -238,13 +233,11 @@ export const WorkoutIntervalInput = ({
               dispatchDataUpdate({
                 type: 'UPDATE_TIME_SECONDS',
                 value: e.target.value,
-                setWorkoutPart,
               });
             }}
             onBlur={() =>
               dispatchDataUpdate({
                 type: 'UPDATE_TIME',
-                setWorkoutPart,
               })
             }
           />
@@ -267,7 +260,6 @@ export const WorkoutIntervalInput = ({
                 type: 'UPDATE_POWER_WATT',
                 value: e.target.value,
                 ftp,
-                setWorkoutPart,
               });
             }}
           />
@@ -285,7 +277,6 @@ export const WorkoutIntervalInput = ({
                 type: 'UPDATE_POWER_PERCENT',
                 value: e.target.value,
                 ftp,
-                setWorkoutPart,
               });
             }}
           />
