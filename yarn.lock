@@ -2386,10 +2386,17 @@
     "@xml-tools/parser" "^1.0.11"
     prettier ">=2.4.0"
 
-"@prisma/client@^6.2.1":
-  version "6.2.1"
-  resolved "https://registry.yarnpkg.com/@prisma/client/-/client-6.2.1.tgz#3d7d0c8669bba490247e1ffff67b93a516bd789f"
-  integrity sha512-msKY2iRLISN8t5X0Tj7hU0UWet1u0KuxSPHWuf3IRkB4J95mCvGpyQBfQ6ufcmvKNOMQSq90O2iUmJEN2e5fiA==
+"@prisma/client-runtime-utils@7.8.0":
+  version "7.8.0"
+  resolved "https://registry.yarnpkg.com/@prisma/client-runtime-utils/-/client-runtime-utils-7.8.0.tgz#202c0a2ac295e19677debd4a2d18dc35f9ccfb21"
+  integrity sha512-5NQZztQ0oY/ADFkmd9gPuweH5A1/CCY8YQPorLLO0Mu6a87mY5gsnDkzmFmIHs9NFaLnZojzgddFVN4RpKYrdw==
+
+"@prisma/client@^7.8.0":
+  version "7.8.0"
+  resolved "https://registry.yarnpkg.com/@prisma/client/-/client-7.8.0.tgz#dce2fb00238c733f6bedeb769547b01f69b86d42"
+  integrity sha512-HFp3Dawv/3sU3JtlPha90IB+48lS7zHiH4LKZPjmcE8YH5P9DOXGPvo8dqOtO7MqLDd1p2hOWMcFlRT1DMblHw==
+  dependencies:
+    "@prisma/client-runtime-utils" "7.8.0"
 
 "@prisma/debug@5.22.0":
   version "5.22.0"
