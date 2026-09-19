@@ -17,8 +17,7 @@
     "db:studio": "prisma studio"
   },
   "dependencies": {
-    "@prisma/client": "^6.2.1",
-    "lint-staged": "^13.0.3"
+    "@prisma/client": "^6.2.1"
   },
   "devDependencies": {
     "@dundring/tsconfig": "*",

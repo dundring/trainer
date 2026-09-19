@@ -7,7 +7,7 @@
     "prepare": "bash prepare.sh",
     "dev": "vite",
     "build": "tsc && vite build",
-    "test": "vitest"
+    "test": "vitest run"
   },
   "dependencies": {
     "@chakra-ui/react": "^2.8.1",
@@ -15,14 +15,9 @@
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.14.0",
     "@rgrove/parse-xml": "^4.1.0",
-    "@svgr/webpack": "^8.1.0",
-    "babel-plugin-named-asset-import": "^0.3.8",
-    "case-sensitive-paths-webpack-plugin": "^2.4.0",
     "dexie": "^4.0.10",
     "dexie-react-hooks": "^1.1.7",
     "dotenv": "^16.3.1",
-    "eslint": "^8.52.0",
-    "eslint-config-react-app": "^7.0.1",
     "framer-motion": "^10.16.4",
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",
@@ -30,20 +25,7 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^7.1.1",
     "recharts": "^2.15.1",
-    "swr": "^2.2.4",
-    "web-vitals": "^3.5.0"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "swr": "^2.2.4"
   },
   "devDependencies": {
     "@dundring/types": "*",
