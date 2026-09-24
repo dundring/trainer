@@ -327,9 +327,32 @@ export const useSmartTrainerInterface = (): SmartTrainerInterface => {
               smartTrainer.service.fitnessMachineControlPointCharacteristic;
             if (fitnessMachineControlPointCharacteristic) {
               if (!resistance) {
-                // Reset
                 await fitnessMachineControlPointCharacteristic.writeValue(
-                  new Uint8Array([0x01])
+                  new Uint8Array([OP_CODES.RESET])
+                );
+
+                const windSpeedAndGrade = Int16Array.of(1, 1);
+                const rollingAndWindResistance = Uint8Array.of(1, 1);
+
+                const totalLength =
+                  windSpeedAndGrade.byteLength +
+                  rollingAndWindResistance.byteLength +
+                  1;
+                const combinedBuffer = new ArrayBuffer(totalLength);
+                const combinedView = new DataView(combinedBuffer);
+
+                combinedView.setUint8(0, OP_CODES.SET_INDOOR_SIMULATION);
+                // wind speed
+                combinedView.setInt16(1, 0, true);
+                // grade
+                combinedView.setInt16(3, 0, true);
+                // rolling resistance, resolution 0.001
+                combinedView.setUint8(5, 255);
+                // wind resistance
+                combinedView.setUint8(6, 255);
+
+                await fitnessMachineControlPointCharacteristic.writeValue(
+                  new Uint8Array(combinedBuffer)
                 );
                 logEvent(`set resistance: Free mode`);
                 setCurrentResistance(0);
@@ -337,7 +360,7 @@ export const useSmartTrainerInterface = (): SmartTrainerInterface => {
                 const resBuf = new Uint8Array(
                   new Uint16Array([resistance]).buffer
                 );
-                const cmdBuf = new Uint8Array([0x05]);
+                const cmdBuf = new Uint8Array([OP_CODES.SET_POWER_TARGET]);
                 const combined = new Uint8Array(cmdBuf.length + resBuf.length);
                 combined.set(cmdBuf);
                 combined.set(resBuf, cmdBuf.length);
@@ -359,4 +382,10 @@ export const useSmartTrainerInterface = (): SmartTrainerInterface => {
       [isConnected, logEvent, smartTrainer]
     ),
   };
+};
+
+const OP_CODES = {
+  RESET: 0x00,
+  SET_POWER_TARGET: 0x05,
+  SET_INDOOR_SIMULATION: 0x11,
 };
