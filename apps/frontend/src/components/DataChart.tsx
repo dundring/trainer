@@ -32,7 +32,7 @@ const fillAreaChart = (
   const showPower = type === 'power' && checked.power;
 
   return (
-    <React.Fragment key={index}>
+    <React.Fragment key={`${dataPrefix}-${type}`}>
       {showFill ? (
         <defs>
           {showHr ? (
