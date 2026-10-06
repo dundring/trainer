@@ -23,7 +23,7 @@
     "react-beautiful-dnd": "^13.1.1",
     "react-bootstrap-icons": "^1.10.3",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^7.1.1",
+    "react-router-dom": "^7.18.4",
     "recharts": "^2.15.1",
     "swr": "^2.2.4"
   },
