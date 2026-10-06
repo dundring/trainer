@@ -32,7 +32,7 @@ const fillAreaChart = (
   const showPower = type === 'power' && checked.power;
 
   return (
-    <React.Fragment key={index}>
+    <React.Fragment key={`${dataPrefix}-${type}`}>
       {showFill ? (
         <defs>
           {showHr ? (
@@ -101,7 +101,7 @@ export const DataChart = ({
   showFill,
 }: Props) => {
   return (
-    <ResponsiveContainer width="100%">
+    <ResponsiveContainer width="100%" style={{ display: 'block' }}>
       <AreaChart data={allMerged}>
         {otherUsers.map((username, i) =>
           fillAreaChart(

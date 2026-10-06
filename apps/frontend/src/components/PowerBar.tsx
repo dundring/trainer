@@ -59,7 +59,7 @@ export const PowerBar = ({
   };
 
   return (
-    <ResponsiveContainer>
+    <ResponsiveContainer style={{ display: 'block' }}>
       <BarChart
         data={[
           [
