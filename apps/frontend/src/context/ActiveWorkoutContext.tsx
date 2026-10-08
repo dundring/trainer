@@ -87,20 +87,21 @@ export const ActiveWorkoutContextProvider = ({
           return activeWorkout;
         }
 
-        const newElapsed = action.millis + activeWorkout.partElapsedTime;
+        const newPartElapsedMillis =
+          action.millis + activeWorkout.partElapsedTime;
 
         if (!activeWorkout.workout) {
-          return { ...activeWorkout, partElapsedTime: newElapsed };
+          return { ...activeWorkout, partElapsedTime: newPartElapsedMillis };
         }
 
-        const elapsedSeconds = Math.floor(newElapsed / 1000);
-        const prevActivePart = activeWorkout.activePart;
-        const prevWorkoutParts = activeWorkout.workout.parts;
-        const currentPartDuration = prevWorkoutParts[prevActivePart].duration;
-        if (currentPartDuration < elapsedSeconds) {
-          // Done with current part
-          if (prevActivePart === prevWorkoutParts.length - 1) {
-            // Done with every part
+        const activePartIndex = activeWorkout.activePart;
+        const activePart = activeWorkout.workout.parts[activePartIndex];
+        const partElapsedSeconds = Math.floor(newPartElapsedMillis / 1000);
+
+        // If done with current part
+        if (activePart.duration <= partElapsedSeconds) {
+          // If Done with every part
+          if (activePartIndex === activeWorkout.workout.parts.length - 1) {
             const nextState: ActiveWorkout = {
               ...activeWorkout,
               partElapsedTime: 0,
@@ -114,14 +115,14 @@ export const ActiveWorkoutContextProvider = ({
           // Only done with current part, other parts unfinished
           const nextState: ActiveWorkout = {
             ...activeWorkout,
-            partElapsedTime: newElapsed - currentPartDuration * 1000,
+            partElapsedTime: newPartElapsedMillis - activePart.duration * 1000,
             activePart: activeWorkout.activePart + 1,
           };
           addLap();
           return nextState;
         }
         // Current part is not finished
-        return { ...activeWorkout, partElapsedTime: newElapsed };
+        return { ...activeWorkout, partElapsedTime: newPartElapsedMillis };
       case 'START': {
         const nextState: ActiveWorkout = { ...activeWorkout, status: 'active' };
         return nextState;
