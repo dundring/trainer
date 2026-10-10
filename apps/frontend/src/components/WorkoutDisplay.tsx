@@ -1,4 +1,4 @@
-import { Text, Stack } from '@chakra-ui/layout';
+import { Stack, Text } from '@chakra-ui/react';
 import * as React from 'react';
 import { useActiveWorkout } from '../context/ActiveWorkoutContext';
 import { Workout } from '../types';

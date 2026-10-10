@@ -1,17 +1,18 @@
 import {
+  Center,
+  Checkbox,
   Modal,
   ModalCloseButton,
   ModalContent,
   ModalHeader,
   ModalOverlay,
-} from '@chakra-ui/modal';
+  Stack,
+  Tooltip,
+} from '@chakra-ui/react';
 import { useOptionsModal } from '../../context/ModalContext';
 import { useNavigate } from 'react-router-dom';
-import { Center, Stack } from '@chakra-ui/layout';
 import * as React from 'react';
 import { useReadWriteOptions } from '../../context/OptionsContext';
-import { Checkbox } from '@chakra-ui/checkbox';
-import { Tooltip } from '@chakra-ui/tooltip';
 
 export const OptionsModal = () => {
   const { isOpen } = useOptionsModal();

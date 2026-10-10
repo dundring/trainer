@@ -1,14 +1,15 @@
 import * as React from 'react';
 import { useUser } from '../../context/UserContext';
 import { useWebsocket } from '../../context/WebsocketContext';
-import { Divider, Stack } from '@chakra-ui/layout';
-import { Button } from '@chakra-ui/button';
 import {
+  Button,
+  Divider,
   FormControl,
   FormErrorMessage,
   FormLabel,
-} from '@chakra-ui/form-control';
-import { Input } from '@chakra-ui/input';
+  Input,
+  Stack,
+} from '@chakra-ui/react';
 import { useParams } from 'react-router';
 import { illegalCharactersInUsername } from '@dundring/utils';
 

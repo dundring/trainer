@@ -1,5 +1,4 @@
-import { Box, Center, Text } from '@chakra-ui/layout';
-import { CloseButton, keyframes } from '@chakra-ui/react';
+import { Box, Center, CloseButton, keyframes, Text } from '@chakra-ui/react';
 import { useMigrationModal } from '../context/ModalContext';
 
 const gradientShift = keyframes`

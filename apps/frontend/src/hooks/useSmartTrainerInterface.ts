@@ -1,4 +1,4 @@
-import { useToast } from '@chakra-ui/toast';
+import { useToast } from '@chakra-ui/react';
 import * as React from 'react';
 import { useLogs } from '../context/LogContext';
 

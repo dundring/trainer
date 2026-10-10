@@ -1,42 +1,40 @@
 import {
-  Modal,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-} from '@chakra-ui/modal';
-import * as React from 'react';
-import { Button } from '@chakra-ui/button';
-import { Stack } from '@chakra-ui/layout';
-import { useUser } from '../../context/UserContext';
-import {
+  Button,
+  Container,
   FormControl,
   FormErrorMessage,
+  FormHelperText,
   FormLabel,
-} from '@chakra-ui/form-control';
-import { Input, InputGroup, InputRightAddon } from '@chakra-ui/input';
+  HStack,
+  Icon,
+  Input,
+  InputGroup,
+  InputRightAddon,
+  Link,
+  List,
+  ListIcon,
+  ListItem,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Stack,
+  Text,
+  UnorderedList,
+  useToast,
+} from '@chakra-ui/react';
+import * as React from 'react';
+import { useUser } from '../../context/UserContext';
 import frontendUtils from '../../utils';
 import * as utils from '@dundring/utils';
 import * as api from '../../api';
-import { useToast } from '@chakra-ui/toast';
 import { useProfileModal } from '../../context/ModalContext';
 import { useNavigate } from 'react-router-dom';
 import { LoggedInUser } from '../../types';
 import { addEditableError, editable, touched } from '../../utils/general';
-import {
-  FormHelperText,
-  ModalBody,
-  ModalFooter,
-  Link,
-  Icon,
-  Text,
-  UnorderedList,
-  ListItem,
-  ListIcon,
-  List,
-  Container,
-  HStack,
-} from '@chakra-ui/react';
 import {
   BoxArrowUpRight,
   CheckCircleFill,

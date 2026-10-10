@@ -1,7 +1,17 @@
-import { Button, IconButton } from '@chakra-ui/button';
-import { Center, Grid, Heading, HStack, Stack, Text } from '@chakra-ui/layout';
-import { useClipboard, useToast, Icon } from '@chakra-ui/react';
-import { Tooltip } from '@chakra-ui/tooltip';
+import {
+  Button,
+  Center,
+  Grid,
+  Heading,
+  HStack,
+  Icon,
+  IconButton,
+  Stack,
+  Text,
+  Tooltip,
+  useClipboard,
+  useToast,
+} from '@chakra-ui/react';
 import { Cloud, Gear, Hdd, Clipboard, Book } from 'react-bootstrap-icons';
 import { StoredWorkoutType, Workout, WorkoutType } from '../../types';
 import {
