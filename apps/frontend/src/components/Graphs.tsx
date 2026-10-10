@@ -1,5 +1,4 @@
-import { AspectRatio, Grid, Stack } from '@chakra-ui/layout';
-import { useBreakpointValue } from '@chakra-ui/media-query';
+import { AspectRatio, Grid, Stack, useBreakpointValue } from '@chakra-ui/react';
 import * as React from 'react';
 import { useData } from '../context/DataContext';
 import { LocalRoom } from '../context/WebsocketContext';

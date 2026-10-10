@@ -1,7 +1,11 @@
-import { useColorModeValue } from '@chakra-ui/color-mode';
-import { Text } from '@chakra-ui/layout';
-import { Tbody } from '@chakra-ui/react';
-import { Table, Td, Tr } from '@chakra-ui/table';
+import {
+  Table,
+  Tbody,
+  Td,
+  Text,
+  Tr,
+  useColorModeValue,
+} from '@chakra-ui/react';
 import { powerColors } from '../../colors';
 
 interface Payload {

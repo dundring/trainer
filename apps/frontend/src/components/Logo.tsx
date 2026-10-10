@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {
   chakra,
-  ImageProps,
   forwardRef,
+  ImageProps,
   useColorModeValue,
 } from '@chakra-ui/react';
 import logoBlack from '../assets/LogoBlack.svg';

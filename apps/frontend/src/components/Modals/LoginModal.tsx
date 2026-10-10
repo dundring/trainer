@@ -1,8 +1,14 @@
-import { Button } from '@chakra-ui/button';
-import { FormControl, FormLabel } from '@chakra-ui/form-control';
-import { Input } from '@chakra-ui/input';
-import { Stack, Text } from '@chakra-ui/layout';
 import {
+  AbsoluteCenter,
+  Box,
+  Button,
+  Center,
+  Divider,
+  Flex,
+  FormControl,
+  FormLabel,
+  HStack,
+  Input,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -10,20 +16,14 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-} from '@chakra-ui/modal';
-import {
-  AbsoluteCenter,
-  Box,
-  Center,
-  Divider,
-  Flex,
-  HStack,
   Spinner,
+  Stack,
+  Text,
+  useToast,
 } from '@chakra-ui/react';
 import * as React from 'react';
 import * as api from '../../api';
 import { useUser } from '../../context/UserContext';
-import { useToast } from '@chakra-ui/react';
 import { useLoginModal } from '../../context/ModalContext';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { ApiStatus } from '@dundring/types';

@@ -1,20 +1,20 @@
 import {
+  Button,
+  Heading,
+  Image,
+  Link,
+  ListItem,
   Modal,
   ModalCloseButton,
   ModalContent,
   ModalHeader,
   ModalOverlay,
-} from '@chakra-ui/modal';
-import { Link, Stack, Text } from '@chakra-ui/layout';
-import { useWelcomeMessageModal } from '../../context/ModalContext';
-import { useLinkPowerColor } from '../../hooks/useLinkColor';
-import {
-  Button,
-  Heading,
-  Image,
-  ListItem,
+  Stack,
+  Text,
   UnorderedList,
 } from '@chakra-ui/react';
+import { useWelcomeMessageModal } from '../../context/ModalContext';
+import { useLinkPowerColor } from '../../hooks/useLinkColor';
 import { githubRepo, slackInvite } from '../../links';
 
 export const WelcomeMessageModal = () => {

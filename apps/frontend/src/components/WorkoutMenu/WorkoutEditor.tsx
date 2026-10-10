@@ -1,11 +1,32 @@
-import { Button } from '@chakra-ui/button';
 import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
+  Button,
   FormControl,
   FormHelperText,
   FormLabel,
-} from '@chakra-ui/form-control';
-import { Input, InputGroup, InputRightAddon } from '@chakra-ui/input';
-import { Grid, HStack, Stack, Text } from '@chakra-ui/layout';
+  Grid,
+  HStack,
+  Icon,
+  Input,
+  InputGroup,
+  InputRightAddon,
+  Stack,
+  Table,
+  Tbody,
+  Td,
+  Text,
+  Tfoot,
+  Th,
+  Thead,
+  Tooltip,
+  Tr,
+  useToast,
+} from '@chakra-ui/react';
 import * as React from 'react';
 import { Workout, WorkoutPart } from '../../types';
 import { templateColumns, WorkoutIntervalInput } from './WorkoutIntervalInput';
@@ -16,24 +37,6 @@ import { useUser } from '../../context/UserContext';
 import * as api from '../../api';
 import { CloudUpload, Hdd, Trash } from 'react-bootstrap-icons';
 import { WorkoutToEdit } from '../Modals/WorkoutEditorModal';
-import {
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogOverlay,
-  Icon,
-  Table,
-  Tbody,
-  Td,
-  Tfoot,
-  Th,
-  Thead,
-  Tooltip,
-  Tr,
-  useToast,
-} from '@chakra-ui/react';
 import { useActiveWorkout } from '../../context/ActiveWorkoutContext';
 import { createZoneTableInfo } from '../../utils/zones';
 import {

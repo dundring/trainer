@@ -4,9 +4,14 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
-} from '@chakra-ui/modal';
+  Table,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+} from '@chakra-ui/react';
 import { useLogs } from '../../context/LogContext';
-import { Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/table';
 import { useLogModal } from '../../context/ModalContext';
 import { useNavigate } from 'react-router-dom';
 import { timestampToFormattedHHMMSS } from '@dundring/utils';
