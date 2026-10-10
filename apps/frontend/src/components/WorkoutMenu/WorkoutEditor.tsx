@@ -30,7 +30,7 @@ import {
 import * as React from 'react';
 import { Workout, WorkoutPart } from '../../types';
 import { templateColumns, WorkoutIntervalInput } from './WorkoutIntervalInput';
-import { DropResult } from 'react-beautiful-dnd';
+import { DropResult } from '@hello-pangea/dnd';
 import { DraggableList } from './DraggableList';
 import { DraggableItem } from './DraggableItem';
 import { useUser } from '../../context/UserContext';
