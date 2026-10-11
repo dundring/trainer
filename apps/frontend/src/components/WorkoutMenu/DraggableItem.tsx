@@ -1,5 +1,5 @@
 import { Center, useColorModeValue } from '@chakra-ui/react';
-import { Draggable } from 'react-beautiful-dnd';
+import { Draggable } from '@hello-pangea/dnd';
 
 interface Props {
   children: React.ReactNode;
