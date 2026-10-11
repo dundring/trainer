@@ -1,5 +1,4 @@
-import { useColorModeValue } from '@chakra-ui/color-mode';
-import { Center } from '@chakra-ui/layout';
+import { Center, useColorModeValue } from '@chakra-ui/react';
 import { Draggable } from 'react-beautiful-dnd';
 
 interface Props {

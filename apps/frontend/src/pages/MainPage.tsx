@@ -1,4 +1,4 @@
-import { Center, Stack } from '@chakra-ui/layout';
+import { Center, Stack } from '@chakra-ui/react';
 import * as React from 'react';
 import { GraphContainer } from '../components/Graph/GraphContainer';
 import { WorkoutDisplay } from '../components/WorkoutDisplay';

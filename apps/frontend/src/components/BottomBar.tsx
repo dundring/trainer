@@ -1,14 +1,23 @@
-import { Center, Link, Stack, Text, Grid, HStack } from '@chakra-ui/layout';
-import { Button } from '@chakra-ui/button';
-import { Tooltip } from '@chakra-ui/tooltip';
+import {
+  Button,
+  Center,
+  Grid,
+  HStack,
+  Icon,
+  Link,
+  Stack,
+  Text,
+  Tooltip,
+  useBreakpointValue,
+  useColorMode,
+  useColorModeValue,
+} from '@chakra-ui/react';
 import { useAvailability } from '../hooks/useAvailability';
 import { Logo } from './Logo';
 import { Github, MoonFill, Slack, SunFill } from 'react-bootstrap-icons';
 import { MainActionBar } from './MainActionBar';
 import { Link as ReachLink, useNavigate } from 'react-router-dom';
-import { useColorMode, useColorModeValue } from '@chakra-ui/color-mode';
 import { useLogs } from '../context/LogContext';
-import { Icon, useBreakpointValue } from '@chakra-ui/react';
 import { githubRepo, slackInvite } from '../links';
 import { useWelcomeMessageModal } from '../context/ModalContext';
 import { useEffect, useState } from 'react';

@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { Checkbox } from '@chakra-ui/checkbox';
-import { Stack, Text } from '@chakra-ui/layout';
+import { Checkbox, Stack, Text } from '@chakra-ui/react';
 import { hrColorsAsStrings, powerColorsAsStrings } from '../../colors';
 import { ShowData } from './GraphContainer';
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { chakra, ImageProps, forwardRef, Link } from '@chakra-ui/react';
+import { chakra, forwardRef, ImageProps, Link } from '@chakra-ui/react';
 import logo from '../assets/connect-with-strava.svg';
 import { getEnv } from '../utils/environment';
 

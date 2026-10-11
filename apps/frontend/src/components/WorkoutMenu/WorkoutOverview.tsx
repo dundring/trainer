@@ -1,12 +1,18 @@
-import { Button } from '@chakra-ui/button';
 import {
+  Button,
+  Center,
+  Divider,
   FormControl,
   FormHelperText,
   FormLabel,
-} from '@chakra-ui/form-control';
-import { Input, InputGroup, InputRightAddon } from '@chakra-ui/input';
-import { Divider, Stack } from '@chakra-ui/layout';
-import { Center, Text, Icon, Select } from '@chakra-ui/react';
+  Icon,
+  Input,
+  InputGroup,
+  InputRightAddon,
+  Select,
+  Stack,
+  Text,
+} from '@chakra-ui/react';
 import * as React from 'react';
 import { PencilSquare } from 'react-bootstrap-icons';
 import { useActiveWorkout } from '../../context/ActiveWorkoutContext';

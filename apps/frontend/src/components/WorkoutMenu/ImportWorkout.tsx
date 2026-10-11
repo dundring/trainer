@@ -7,9 +7,9 @@ import {
   HStack,
   Input,
   InputGroup,
+  Text,
 } from '@chakra-ui/react';
 import { getWorkout } from '../../api';
-import { Text } from '@chakra-ui/layout';
 import { WorkoutToEdit } from '../Modals/WorkoutEditorModal';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';

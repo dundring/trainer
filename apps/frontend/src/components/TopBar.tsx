@@ -1,8 +1,7 @@
-import { Center, Grid, Stack, Text } from '@chakra-ui/layout';
+import { Center, Grid, Stack, Text, useColorModeValue } from '@chakra-ui/react';
 import { hrColor, powerColor } from '../colors';
 import { useSmartTrainer } from '../context/SmartTrainerContext';
 import { useHeartRateMonitor } from '../context/HeartRateContext';
-import { useColorModeValue } from '@chakra-ui/color-mode';
 import theme from '../theme';
 import { useData } from '../context/DataContext';
 import {

@@ -1,20 +1,3 @@
-import { IconButton } from '@chakra-ui/button';
-import { Icon } from '@chakra-ui/icon';
-import {
-  Modal,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-} from '@chakra-ui/modal';
-import * as React from 'react';
-import { ArrowLeft } from 'react-bootstrap-icons';
-import { WorkoutOverview } from '../WorkoutMenu/WorkoutOverview';
-import { Workout, WorkoutType } from '../../types';
-import { WorkoutEditor } from '../WorkoutMenu/WorkoutEditor';
-import { useUser } from '../../context/UserContext';
-import { useWorkoutEditorModal } from '../../context/ModalContext';
-import { useActiveWorkout } from '../../context/ActiveWorkoutContext';
 import {
   AlertDialog,
   AlertDialogBody,
@@ -24,7 +7,22 @@ import {
   AlertDialogOverlay,
   Button,
   HStack,
+  Icon,
+  IconButton,
+  Modal,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
 } from '@chakra-ui/react';
+import * as React from 'react';
+import { ArrowLeft } from 'react-bootstrap-icons';
+import { WorkoutOverview } from '../WorkoutMenu/WorkoutOverview';
+import { Workout, WorkoutType } from '../../types';
+import { WorkoutEditor } from '../WorkoutMenu/WorkoutEditor';
+import { useUser } from '../../context/UserContext';
+import { useWorkoutEditorModal } from '../../context/ModalContext';
+import { useActiveWorkout } from '../../context/ActiveWorkoutContext';
 import { useNavigate } from 'react-router-dom';
 
 export interface WorkoutToEdit extends Workout {

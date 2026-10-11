@@ -1,4 +1,3 @@
-import { Text } from '@chakra-ui/layout';
 import {
   Modal,
   ModalBody,
@@ -6,7 +5,8 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
-} from '@chakra-ui/modal';
+  Text,
+} from '@chakra-ui/react';
 import { useMigrationModal } from '../../context/ModalContext';
 
 export const MigrationModal = () => {

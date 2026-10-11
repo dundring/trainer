@@ -1,8 +1,13 @@
 import * as React from 'react';
 import { Graphs } from '../Graphs';
-import { Center, HStack, Stack } from '@chakra-ui/layout';
-import { Tooltip } from '@chakra-ui/tooltip';
-import { IconButton } from '@chakra-ui/button';
+import {
+  Center,
+  HStack,
+  Icon,
+  IconButton,
+  Stack,
+  Tooltip,
+} from '@chakra-ui/react';
 import {
   BarChartLine,
   BarChartLineFill,
@@ -11,7 +16,6 @@ import {
 } from 'react-bootstrap-icons';
 import { GraphCheckboxes } from './GraphCheckboxes';
 import { useWebsocket } from '../../context/WebsocketContext';
-import { Icon } from '@chakra-ui/react';
 
 export interface ShowData {
   hr: boolean;

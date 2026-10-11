@@ -1,5 +1,4 @@
-import { IconButton } from '@chakra-ui/button';
-import { Center, HStack, Text } from '@chakra-ui/layout';
+import { Center, HStack, IconButton, Text } from '@chakra-ui/react';
 import * as React from 'react';
 
 interface Props {

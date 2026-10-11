@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useWebsocket } from '../../context/WebsocketContext';
 import {
+  Button,
   Heading,
   HStack,
   List,
@@ -8,14 +9,13 @@ import {
   ListItem,
   Stack,
   Text,
-} from '@chakra-ui/layout';
-import { Button } from '@chakra-ui/button';
+  Tooltip,
+  useClipboard,
+  useToast,
+} from '@chakra-ui/react';
 import { Person, PersonFill } from 'react-bootstrap-icons';
 import { hrColors, powerColors } from '../../colors';
-import { useToast } from '@chakra-ui/toast';
-import { useClipboard } from '@chakra-ui/hooks';
 import * as api from '../../api';
-import { Tooltip } from '@chakra-ui/tooltip';
 import { useLinkColor } from '../../hooks/useLinkColor';
 
 export const GroupSessionOverview = () => {

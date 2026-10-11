@@ -1,7 +1,6 @@
-import { Button } from '@chakra-ui/button';
+import { Button, Icon } from '@chakra-ui/react';
 import { Download } from 'react-bootstrap-icons';
 import { useData } from '../../context/DataContext';
-import { Icon } from '@chakra-ui/react';
 import { downloadTcx } from '../../createTcxFile';
 
 export const DownloadTCXButton = ({}: {}) => {

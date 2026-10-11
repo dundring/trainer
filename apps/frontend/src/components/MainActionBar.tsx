@@ -1,9 +1,16 @@
 import * as React from 'react';
-import { Center, Stack, Grid, HStack } from '@chakra-ui/layout';
-import { Button, IconButton } from '@chakra-ui/button';
+import {
+  Button,
+  Center,
+  Grid,
+  HStack,
+  Icon,
+  IconButton,
+  Stack,
+  Tooltip,
+  useColorModeValue,
+} from '@chakra-ui/react';
 import { Grid3x2GapFill } from 'react-bootstrap-icons';
-import { Tooltip } from '@chakra-ui/tooltip';
-import { useColorModeValue } from '@chakra-ui/color-mode';
 import { useSmartTrainer } from '../context/SmartTrainerContext';
 import { StartButton } from './MainActionBar/StartButton';
 import { PowerControls } from './MainActionBar/PowerControls';
@@ -12,7 +19,6 @@ import { QuickPowerButton } from './MainActionBar/QuickPowerButton';
 import { WorkoutControls } from './MainActionBar/WorkoutControls';
 import { SelectWorkoutButton } from './MainActionBar/SelectWorkoutButton';
 import { useLinkColor } from '../hooks/useLinkColor';
-import { Icon } from '@chakra-ui/react';
 import { RecoverWorkout } from './MainActionBar/RecoverWorkout';
 
 export const MainActionBar = () => {

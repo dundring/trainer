@@ -4,7 +4,7 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
-} from '@chakra-ui/modal';
+} from '@chakra-ui/react';
 import { useWebsocket } from '../../context/WebsocketContext';
 import { GroupSessionOverview } from '../GroupSession/GroupSessionOverview';
 import { CreateOrJoinGroupSession } from '../GroupSession/CreateOrJoinGroupSession';

@@ -1,25 +1,25 @@
-import { Button } from '@chakra-ui/button';
-import { FormControl, FormLabel } from '@chakra-ui/form-control';
-import { Input } from '@chakra-ui/input';
-import { Stack, Text } from '@chakra-ui/layout';
 import {
+  Button,
+  Flex,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Input,
+  Link,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
   ModalHeader,
   ModalOverlay,
-} from '@chakra-ui/modal';
-import {
-  Flex,
-  FormHelperText,
-  Link,
   Spinner,
+  Stack,
+  Text,
   Textarea,
+  useToast,
 } from '@chakra-ui/react';
 import * as React from 'react';
 import * as api from '../../api';
-import { useToast } from '@chakra-ui/react';
 import { useFeedbackModal } from '../../context/ModalContext';
 import { useNavigate } from 'react-router-dom';
 import * as utils from '@dundring/utils';

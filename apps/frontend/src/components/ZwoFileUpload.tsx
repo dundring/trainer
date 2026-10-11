@@ -1,9 +1,14 @@
 import React, { ChangeEvent } from 'react';
 import { WorkoutToEdit } from './Modals/WorkoutEditorModal';
-import { Center, Input, Tooltip, useToast } from '@chakra-ui/react';
+import {
+  Button,
+  Center,
+  Input,
+  Stack,
+  Tooltip,
+  useToast,
+} from '@chakra-ui/react';
 import { parseZwoWorkout } from '../utils/ZwoParsing';
-import { Stack } from '@chakra-ui/layout';
-import { Button } from '@chakra-ui/button';
 
 interface Props {
   previewFtp: number;
