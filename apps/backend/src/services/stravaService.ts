@@ -1,28 +1,8 @@
-import {
-  Status,
-  StravaToken,
-  StravaTokenRefresh,
-  StravaUpload,
-} from '@dundring/types';
+import { Status, StravaUpload } from '@dundring/types';
 import { error, isSuccess, success } from '@dundring/utils';
 import fetch from 'node-fetch';
 import * as FormData from 'form-data';
 import { monitoringService } from './index';
-
-require('dotenv').config();
-
-export const checkStravaConfig = () => {
-  if (!process.env.STRAVA_CLIENT_ID) {
-    console.log(
-      '[.env]: No Strava client id provided. Override this by setting the STRAVA_CLIENT_ID in the environment config.'
-    );
-  }
-  if (!process.env.STRAVA_CLIENT_SECRET) {
-    console.log(
-      '[.env]: No Strava client secret provided. Override this by setting the STRAVA_CLIENT_SECRET in the environment config.'
-    );
-  }
-};
 
 export const uploadFileToStrava = async (
   fileContent: string,
@@ -108,86 +88,6 @@ export const uploadFileToStrava = async (
   } catch (err) {
     console.error('Upload failed:', err);
     return error('Something went wrong while uploading');
-  }
-};
-
-export const getStravaTokenFromAuthCode = async (
-  code: string
-): Promise<
-  Status<
-    StravaToken,
-    | 'Invalid authorization code'
-    | 'Something went wrong while fetching Strava token'
-  >
-> => {
-  const url = `https://www.strava.com/api/v3/oauth/token`;
-
-  const body = {
-    client_id: process.env.STRAVA_CLIENT_ID,
-    client_secret: process.env.STRAVA_CLIENT_SECRET,
-    grant_type: 'authorization_code',
-    code,
-  };
-
-  try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
-
-    if (!response.ok) return error('Invalid authorization code');
-
-    const token: StravaToken = await response.json();
-    console.log('token:', token);
-
-    return success(token);
-  } catch (e) {
-    console.error('[getStravaTokenFromAuthCode]:', e);
-    return error('Something went wrong while fetching Strava token');
-  }
-};
-
-export const getStravaTokenFromRefreshToken = async (
-  refreshToken: string
-): Promise<
-  Status<
-    StravaTokenRefresh,
-    | 'Invalid authorization code'
-    | 'Something went wrong while fetching Strava token'
-  >
-> => {
-  const url = `https://www.strava.com/api/v3/oauth/token`;
-
-  const body = {
-    client_id: process.env.STRAVA_CLIENT_ID,
-    client_secret: process.env.STRAVA_CLIENT_SECRET,
-    grant_type: 'refresh_token',
-    refresh_token: refreshToken,
-  };
-
-  try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
-
-    if (!response.ok) {
-      console.log(response);
-      return error('Invalid authorization code');
-    }
-
-    const token: StravaToken = await response.json();
-
-    return success(token);
-  } catch (e) {
-    console.error('[getStravaTokenFromRefreshToken]:', e);
-    return error('Something went wrong while fetching Strava token');
   }
 };
 

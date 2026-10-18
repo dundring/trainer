@@ -40,7 +40,9 @@ import {
   CheckCircleFill,
   Circle,
 } from 'react-bootstrap-icons';
-import { getStravaAuthorizeUrl } from '../ConnectWithStravaButton';
+import { ConnectWithStravaButton } from '../ConnectWithStravaButton';
+import { connectStrava } from '../../auth';
+import { getEnv } from '../../utils/environment';
 
 export const ProfileModal = () => {
   const { isOpen } = useProfileModal();
@@ -75,7 +77,7 @@ export const ProfileModalContent = ({ user, onClose }: Props) => {
   const [usernameInput, setUsernameInput] = React.useState(
     editable(settingUpProfile ? '' : user.username)
   );
-  const { setUser } = useUser();
+  const { setUser, signOut } = useUser();
 
   const [isLoading, setIsLoading] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
@@ -86,7 +88,7 @@ export const ProfileModalContent = ({ user, onClose }: Props) => {
       return;
     }
 
-    const response = await api.updateUser(user.token, {
+    const response = await api.updateUser({
       ftp: parseInt(input.ftp.trim()),
       username: input.username,
     });
@@ -101,8 +103,8 @@ export const ProfileModalContent = ({ user, onClose }: Props) => {
         setErrorMessage(response.message);
       }
     } else if (response.status === 'SUCCESS') {
-      const { ftp, username, accessToken } = response.data;
-      setUser({ ...user, ftp, username, token: accessToken });
+      const { ftp, username } = response.data;
+      setUser({ ...user, ftp, username });
 
       toast({
         title: settingUpProfile ? 'Profile set up!' : 'Data updated!',
@@ -231,47 +233,61 @@ export const ProfileModalContent = ({ user, onClose }: Props) => {
               <FormControl isInvalid={errorMessage !== ''}>
                 <FormErrorMessage>{errorMessage}</FormErrorMessage>
               </FormControl>
-              {user.stravaData ? (
-                <Stack>
-                  <Text fontWeight="medium">Strava</Text>
-                  <Link
-                    href={`https://strava.com/athletes/${user.stravaData.athleteId}`}
-                    fontSize="sm"
-                    alignItems="center"
-                    isExternal
-                    display="flex"
-                    gap="5px"
-                  >
-                    View connected Strava profile
-                    <BoxArrowUpRight />
-                  </Link>
-                  <Text>Granted permissions</Text>
-                  <List>
-                    <ListItem>
-                      <ListIcon as={scopeIcon(user.stravaData.scopes.read)} />
-                      Read basic profile data
-                    </ListItem>
-                    <ListItem>
-                      <ListIcon
-                        as={scopeIcon(user.stravaData.scopes.activityWrite)}
-                      />
-                      Post activities
-                    </ListItem>
-                  </List>
-                  <HStack>
+              <Stack>
+                <Text fontWeight="medium">Strava</Text>
+                {user.strava ? (
+                  <>
                     <Link
-                      href={getStravaAuthorizeUrl({ forcePrompt: true })}
+                      href={`https://strava.com/athletes/${user.strava.athleteId}`}
                       fontSize="sm"
+                      alignItems="center"
                       isExternal
                       display="flex"
-                      alignItems="center"
                       gap="5px"
                     >
-                      Update permissions <BoxArrowUpRight />
+                      View connected Strava profile
+                      <BoxArrowUpRight />
                     </Link>
-                  </HStack>
-                </Stack>
-              ) : null}
+                    <List>
+                      <ListItem>
+                        <ListIcon as={scopeIcon(user.strava.canUpload)} />
+                        Post activities
+                      </ListItem>
+                    </List>
+                    <HStack>
+                      <Link
+                        as="button"
+                        type="button"
+                        onClick={() => connectStrava({ consent: true })}
+                        fontSize="sm"
+                        display="flex"
+                        alignItems="center"
+                        gap="5px"
+                      >
+                        Update permissions
+                      </Link>
+                    </HStack>
+                  </>
+                ) : (
+                  <>
+                    <Text fontSize="sm">
+                      Connect Strava to upload your workouts there.
+                    </Text>
+                    <ConnectWithStravaButton />
+                  </>
+                )}
+              </Stack>
+              <Link
+                href={`${getEnv().identityUrl}/settings`}
+                fontSize="sm"
+                alignItems="center"
+                isExternal
+                display="flex"
+                gap="5px"
+              >
+                Manage your Dundring account (sign-in methods, email)
+                <BoxArrowUpRight />
+              </Link>
             </Stack>
           </Stack>
         </ModalBody>
@@ -288,7 +304,7 @@ export const ProfileModalContent = ({ user, onClose }: Props) => {
                   duration: 5000,
                   status: 'success',
                 });
-                setUser({ loggedIn: false });
+                signOut();
                 onClose();
               }}
             >

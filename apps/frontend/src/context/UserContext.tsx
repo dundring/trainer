@@ -1,7 +1,11 @@
 import * as React from 'react';
 import useSWR from 'swr';
-import { fetchMyWorkouts, validateToken } from '../api';
-import { UserContextType, Workout } from '../types';
+import { useToast } from '@chakra-ui/react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { settingUpProfile } from '@dundring/utils';
+import * as api from '../api';
+import * as auth from '../auth';
+import { LoggedInUser, UserContextType, Workout } from '../types';
 
 export const defaultUser: UserContextType = {
   loggedIn: false,
@@ -14,65 +18,134 @@ const UserContext = React.createContext<{
   saveLocalWorkout: (workout: Workout) => void;
   deleteLocalWorkout: (workoutId: string) => void;
   setUser: (user: UserContextType) => void;
+  signOut: () => void;
   refetchData: () => void;
 } | null>(null);
+
+const loadUser = async (): Promise<LoggedInUser | null> => {
+  const [me, userinfo] = await Promise.all([
+    api.getMe(),
+    api.getUserinfo().catch(() => null),
+  ]);
+  if (me.status !== 'SUCCESS') return null;
+
+  return {
+    loggedIn: true,
+    username: me.data.username,
+    ftp: me.data.ftp,
+    workouts: [],
+    strava: userinfo?.strava
+      ? {
+          athleteId: userinfo.strava.athlete_id,
+          canUpload: userinfo.strava.scopes.includes('activity:write'),
+        }
+      : null,
+  };
+};
 
 export const UserContextProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
+  const [user, setUser] = React.useState<UserContextType>(defaultUser);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const toast = useToast();
+
+  // Runs once on page load: finishes a sign-in or a Strava connect coming back
+  // from identity, or resumes a stored session.
   React.useEffect(() => {
-    const abortController = new AbortController();
-    const authenticate = async (
-      localToken: string,
-      abortController: AbortController
-    ) => {
-      try {
-        const ret = await validateToken(localToken, abortController);
+    const returnTo =
+      new URLSearchParams(location.search).get('return_to') || '/';
 
-        switch (ret.status) {
-          case 'SUCCESS':
-            setUser({
-              loggedIn: true,
-              token: localToken,
-              username: ret.data.username,
-              workouts: [],
-              ftp: ret.data.ftp,
-              stravaData: ret.data.stravaData,
+    switch (location.pathname) {
+      case auth.callbackPath:
+        auth
+          .handleCallback()
+          .then(async (path) => {
+            const loaded = path ? await loadUser() : null;
+            if (!loaded) {
+              toast({
+                title: 'Sign in failed',
+                description: 'Try again.',
+                isClosable: true,
+                duration: 10000,
+                status: 'error',
+              });
+              navigate('/', { replace: true });
+              return;
+            }
+            setUser(loaded);
+            const [pathname, query] = path!.split('?');
+            // Signed in on the way to connecting Strava (see auth.connectStrava).
+            if (pathname === auth.connectStravaPath) {
+              const params = new URLSearchParams(query);
+              window.location.assign(
+                auth.connectStravaUrl({
+                  returnTo: params.get('return_to') || '/',
+                  consent: params.has('consent'),
+                })
+              );
+              return;
+            }
+            // New users get a placeholder username and pick their own.
+            if (settingUpProfile(loaded)) {
+              navigate('/profile', { replace: true });
+              return;
+            }
+            toast({
+              title: `Logged in as ${loaded.username}`,
+              isClosable: true,
+              duration: 5000,
+              status: 'success',
             });
-            break;
-          default:
-            localStorage['usertoken'] = '';
-        }
-      } catch (error) {
-        console.log('ERROR:', error);
-      }
-    };
-
-    const locallyStoredToken = localStorage['usertoken'];
-
-    if (locallyStoredToken) {
-      authenticate(locallyStoredToken, abortController).catch(console.error);
+            navigate(path!, { replace: true });
+          })
+          .catch(console.error);
+        return;
+      case auth.connectedPath:
+        // Sign in again rather than reuse the tokens: connecting can switch to
+        // another (existing) Dundring account, see identity's /account/switch.
+        auth.login(returnTo);
+        return;
     }
 
-    return () => abortController.abort();
+    // Tokens from the trainer's own login, before it moved to identity.
+    if (localStorage['usertoken']) {
+      localStorage.removeItem('usertoken');
+      if (!auth.hasSession()) {
+        toast({
+          title: 'Dundring has a new sign in',
+          description:
+            'The trainer and dundring.com now share one login. Sign in again; your workouts are still here.',
+          isClosable: true,
+          duration: null,
+          status: 'info',
+        });
+      }
+    }
+
+    if (auth.hasSession()) {
+      loadUser()
+        .then((loaded) => loaded && setUser(loaded))
+        .catch(console.error);
+    }
   }, []);
 
-  const [user, setUser] = React.useState<UserContextType>(defaultUser);
   const { data: userWorkouts, mutate: refetchWorkouts } = useSWR(
     ['/me/workouts', user.loggedIn],
-    () => (user.loggedIn ? fetchMyWorkouts(user.token) : null)
+    () => (user.loggedIn ? api.fetchMyWorkouts() : null)
   );
+
+  const signOut = () => {
+    auth.logout();
+    setUser(defaultUser);
+  };
 
   const [localWorkouts, setLocalWorkouts] = React.useState<Workout[]>(
     localStorage['workouts'] ? JSON.parse(localStorage['workouts']) : []
   );
-
-  const setUserExternal = (user: UserContextType) => {
-    localStorage['usertoken'] = user.loggedIn ? user.token : '';
-    setUser(user);
-  };
 
   const deleteLocalWorkout = (workoutId: string) => {
     setLocalWorkouts((localWorkouts) => {
@@ -120,7 +193,8 @@ export const UserContextProvider = ({
     <UserContext.Provider
       value={{
         user,
-        setUser: setUserExternal,
+        setUser,
+        signOut,
         workouts,
         refetchData: () => {
           console.log('refetch user data');

@@ -9,7 +9,6 @@ import { useLocation, useParams } from 'react-router-dom';
 import {
   useFeedbackModal,
   useGroupSessionModal,
-  useLoginModal,
   useLogModal,
   useProfileModal,
   useWelcomeMessageModal,
@@ -21,6 +20,7 @@ import { BottomBar } from '../components/BottomBar';
 import { Footer } from '../components/Footer';
 import { MigrationBanner } from '../components/MigrationBanner';
 import { useMigrationBannerDismissed } from '../hooks/useMigrationBanner';
+import { login } from '../auth';
 
 export const MainPage = () => {
   const { connect } = useWebsocket();
@@ -35,8 +35,6 @@ export const MainPage = () => {
   const { onOpen: onOpenProfileModal, onClose: onCloseProfileModal } =
     useProfileModal();
   const { onOpen: onOpenLogModal, onClose: onCloseLogModal } = useLogModal();
-  const { onOpen: onOpenLoginModal, onClose: onCloseLoginModal } =
-    useLoginModal();
   const {
     onOpen: onOpenWelcomeMessageModal,
     onClose: onCloseWelcomeMessageModal,
@@ -64,8 +62,11 @@ export const MainPage = () => {
         return;
 
       case 'login':
+        login('/');
+        return;
+
       case 'auth':
-        onOpenLoginModal();
+        // Sign-in callbacks; UserContext handles them.
         return;
 
       case 'logs':
@@ -83,7 +84,6 @@ export const MainPage = () => {
       default:
         onCloseGroupSessionModal();
         onCloseLogModal();
-        onCloseLoginModal();
         onCloseProfileModal();
         onCloseWorkoutEditorModal();
         feedbackModal.onClose();
@@ -95,8 +95,6 @@ export const MainPage = () => {
     connect,
     onOpenLogModal,
     onCloseLogModal,
-    onOpenLoginModal,
-    onCloseLoginModal,
     onOpenProfileModal,
     onCloseProfileModal,
     onOpenGroupSessionModal,

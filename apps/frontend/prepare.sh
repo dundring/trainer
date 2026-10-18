@@ -2,7 +2,8 @@ config="\
 VITE_DOMAIN=http://localhost:5173
 VITE_HTTP_URL=http://localhost:8080/api
 VITE_WS_URL=ws://localhost:8080
-VITE_STRAVA_CLIENT_ID=
+VITE_IDENTITY_URL=
+VITE_IDENTITY_AUDIENCE=
 "
 
 echo "frontend/prepare.sh – Starting ⚡️"

@@ -70,24 +70,25 @@ export const WorkoutEditor = ({
   const { activeFtp, setActiveFtp, setActiveWorkout } = useActiveWorkout();
   const { user, saveLocalWorkout, deleteLocalWorkout } = useUser();
   const toast = useToast();
-  const token = (user.loggedIn && user.token) || null;
+  const loggedIn = user.loggedIn;
   const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
 
   const canSaveLocally =
     loadedWorkout.type === 'new' || loadedWorkout.type === 'local';
 
   const canSaveRemotely =
-    token && (loadedWorkout.type === 'new' || loadedWorkout.type === 'remote');
+    loggedIn &&
+    (loadedWorkout.type === 'new' || loadedWorkout.type === 'remote');
 
   const isStored =
-    (token && loadedWorkout.type === 'remote') ||
+    (loggedIn && loadedWorkout.type === 'remote') ||
     loadedWorkout.type === 'local';
 
   const cancelRef = React.useRef<HTMLButtonElement>(null);
 
   const saveRemotely = async (workoutToSave: Workout) => {
-    if (token) {
-      const res = await api.saveWorkout(token, { workout: workoutToSave });
+    if (loggedIn) {
+      const res = await api.saveWorkout({ workout: workoutToSave });
       if (res.status === ApiStatus.FAILURE) {
         toast({
           title: `Save workout remotely failed`,
@@ -103,8 +104,8 @@ export const WorkoutEditor = ({
   };
 
   const deleteRemotely = async () => {
-    if (token) {
-      const res = await api.deleteWorkout(token, workout.id);
+    if (loggedIn) {
+      const res = await api.deleteWorkout(workout.id);
       if (res.status === ApiStatus.FAILURE) {
         toast({
           title: `Deleting workout failed`,

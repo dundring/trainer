@@ -7,6 +7,13 @@ import { useUser } from '../../context/UserContext';
 import { ApiStatus } from '@dundring/types';
 import { useState } from 'react';
 import { useActiveWorkout } from '../../context/ActiveWorkoutContext';
+import { connectStrava } from '../../auth';
+
+// The backend's answers when identity has no usable Strava connection.
+const needsStravaMessages = [
+  'Strava not connected',
+  'Strava needs to be reconnected',
+];
 
 export const UploadToStravaButton = () => {
   const { trackedData } = useData();
@@ -17,11 +24,26 @@ export const UploadToStravaButton = () => {
 
   const toast = useToast();
 
-  if (!user.loggedIn || !user.stravaData?.scopes.activityWrite) {
+  if (!user.loggedIn) {
     return (
-      <Tooltip label="You need to be logged in and have granted permission to post activities to Strava">
+      <Tooltip label="Sign in to upload activities to Strava">
         <Button isDisabled leftIcon={<Icon as={Upload} />}>
           Upload to Strava
+        </Button>
+      </Tooltip>
+    );
+  }
+
+  // The ride is kept in this browser (IndexedDB) while Strava is connected.
+  if (!user.strava?.canUpload || state.type === 'NeedsStrava') {
+    return (
+      <Tooltip label="Allow Dundring to post activities to your Strava account">
+        <Button
+          width="100%"
+          onClick={() => connectStrava()}
+          leftIcon={<Icon as={Upload} />}
+        >
+          Connect Strava to upload
         </Button>
       </Tooltip>
     );
@@ -50,12 +72,22 @@ export const UploadToStravaButton = () => {
         setState({ type: 'Loading' });
         api
           .uploadActivity(
-            user.token,
             toTcxString(trackedData),
             activeWorkout.workout?.name ?? null
           )
           .then((response) => {
-            if (response.status === ApiStatus.FAILURE) {
+            if (
+              response.status === ApiStatus.FAILURE &&
+              needsStravaMessages.includes(response.message)
+            ) {
+              setState({ type: 'NeedsStrava' });
+              toast({
+                title: 'Strava needs to be reconnected',
+                isClosable: true,
+                duration: 10000,
+                status: 'warning',
+              });
+            } else if (response.status === ApiStatus.FAILURE) {
               setState({ type: 'Error', msg: response.message });
               toast({
                 title: 'Failed to upload activity to Strava',
@@ -100,4 +132,5 @@ type UploadState =
   | { type: 'NotAsked' }
   | { type: 'Loading' }
   | { type: 'Error'; msg: string }
+  | { type: 'NeedsStrava' }
   | { type: 'Success'; activityId: number };

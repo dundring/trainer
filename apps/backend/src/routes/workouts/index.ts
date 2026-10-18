@@ -16,9 +16,10 @@ const router = express.Router();
 router.get<null, ApiResponseBody<WorkoutsResponseBody>>(
   '/',
   async (req, res) => {
-    if (!validationService.authenticateToken(req, res)) return;
+    const auth = await validationService.authenticate(req, res);
+    if (!auth) return;
 
-    const workouts = await workoutService.getUserWorkouts(req.userId);
+    const workouts = await workoutService.getUserWorkouts(auth.userId);
 
     if (isError(workouts)) {
       res.send({ status: ApiStatus.FAILURE, message: workouts.type });
@@ -35,12 +36,13 @@ router.get<null, ApiResponseBody<WorkoutsResponseBody>>(
 router.post<WorkoutRequestBody, ApiResponseBody<UpdateWorkoutResponseBody>>(
   '/',
   async (req, res) => {
-    if (!validationService.authenticateToken(req, res)) return;
+    const auth = await validationService.authenticate(req, res);
+    if (!auth) return;
 
     const workout = req.body.workout;
 
     const ret = await workoutService.upsertWorkout(
-      req.userId,
+      auth.userId,
       workout,
       workout.id
     );
@@ -65,10 +67,11 @@ router.post<WorkoutRequestBody, ApiResponseBody<UpdateWorkoutResponseBody>>(
 router.delete<{ workoutId: string }, ApiResponseBody<{}>>(
   '/:workoutId',
   async (req, res) => {
-    if (!validationService.authenticateToken(req, res)) return;
+    const auth = await validationService.authenticate(req, res);
+    if (!auth) return;
     const workoutId = req.params['workoutId'];
 
-    const ret = await workoutService.deleteWorkout(req.userId, workoutId);
+    const ret = await workoutService.deleteWorkout(auth.userId, workoutId);
 
     switch (ret.status) {
       case 'SUCCESS':

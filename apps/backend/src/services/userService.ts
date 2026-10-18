@@ -1,8 +1,6 @@
-import { Scopes, UserCreationStrava } from '@dundring/types';
-
 require('dotenv').config();
 import * as db from '../db';
-import { isSuccess } from '@dundring/utils';
+import { isError, isSuccess } from '@dundring/utils';
 import { monitoringService } from '.';
 
 export const getUser = async (query: { username: string } | { id: string }) =>
@@ -23,10 +21,6 @@ export const updateUser = async (
   return ret;
 };
 
-export const getUserByMail = async (mail: string) => db.getUserByMail(mail);
-export const getUserByStravaId = async (athleteId: number) =>
-  db.getUserByStravaId(athleteId);
-
 export const getUserWorkoutsByUserId = async (userId: string) =>
   db.getUserWorkouts(userId);
 
@@ -36,31 +30,16 @@ export const updateUserFtp = async (userId: string, ftp: number) =>
 export const getUserFitnessData = async (userId: string) =>
   db.getFitnessData(userId);
 
-export const createUserFromStrava = async (body: UserCreationStrava) => {
-  const ret = await db.createStravaUserWithRandomUsername(body);
-  if (isSuccess(ret)) {
-    const athleteId = ret.data.stravaAuthentication?.athleteId;
-    monitoringService.log(
-      `New user: *${ret.data.id}* created with Strava: athlete id: https://strava.com/athletes/${athleteId}`
-    );
+/** The trainer user for an identity user, created on their first sign-in. */
+export const getOrCreateUser = async (id: string) => {
+  const existing = await db.getUser({ id });
+  if (isError(existing) && existing.type === 'User not found') {
+    const created = await db.createUserWithRandomUsername(id);
+    if (isSuccess(created)) {
+      monitoringService.log(`New user: *${id}*`);
+    }
+    // Read it back either way: a parallel request may have created it.
+    return db.getUser({ id });
   }
-  return ret;
-};
-
-export const createUserFromMail = async (mail: string) => {
-  const ret = await db.createMailUserWithRandomUsername(mail);
-  if (isSuccess(ret)) {
-    monitoringService.log(
-      `New user: *${ret.data.id}* created with mail: ${ret.data.mailAuthentication?.mail}`
-    );
-  }
-  return ret;
-};
-
-export const updateRefreshTokenAndScopes = async (data: {
-  athleteId: number;
-  refreshToken: string;
-  scopes: Scopes;
-}) => {
-  return db.updateStravaRefreshTokenAndScopes(data);
+  return existing;
 };
