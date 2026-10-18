@@ -257,7 +257,8 @@ export const ProfileModalContent = ({ user, onClose }: Props) => {
                     <HStack>
                       <Link
                         as="button"
-                        onClick={() => connectStrava()}
+                        type="button"
+                        onClick={() => connectStrava({ consent: true })}
                         fontSize="sm"
                         display="flex"
                         alignItems="center"

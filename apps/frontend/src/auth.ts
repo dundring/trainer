@@ -163,22 +163,38 @@ export const connectStravaPath = '/auth/connect-strava';
 /** Where identity's connect page returns to. */
 export const connectedPath = '/auth/connected';
 
+interface ConnectOptions {
+  /** Path to come back to; the current page by default. */
+  returnTo?: string;
+  /** Show Strava's consent page even when everything is granted, to change permissions. */
+  consent?: boolean;
+}
+
 /**
- * Connects Strava at identity, then comes back to `returnTo`. Signs in first:
- * identity's connect page needs its own session, which can expire long before
- * the trainer's refresh token does (instant while it's still there).
+ * Connects Strava at identity, then comes back. Signs in first: identity's
+ * connect page needs its own session, which can expire long before the
+ * trainer's refresh token does (instant while it's still there).
  */
-export const connectStrava = (
-  returnTo = `${location.pathname}${location.search}`
-) => login(`${connectStravaPath}?return_to=${encodeURIComponent(returnTo)}`);
+export const connectStrava = ({
+  returnTo = `${location.pathname}${location.search}`,
+  consent = false,
+}: ConnectOptions = {}) => {
+  const params = new URLSearchParams({ return_to: returnTo });
+  if (consent) params.set('consent', '1');
+  return login(`${connectStravaPath}?${params}`);
+};
 
 /** Identity's connect page, which returns to `connectedPath`. */
-export const connectStravaUrl = (returnTo: string) => {
+export const connectStravaUrl = ({
+  returnTo = '/',
+  consent,
+}: ConnectOptions) => {
   const url = new URL(`${getEnv().identityUrl}/connect/strava`);
   url.searchParams.set('client_id', identityClientId);
   url.searchParams.set(
     'redirect_uri',
     `${location.origin}${connectedPath}?return_to=${encodeURIComponent(returnTo)}`
   );
+  if (consent) url.searchParams.set('prompt', 'consent');
   return url.toString();
 };

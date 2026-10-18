@@ -6,7 +6,7 @@ import { connectStrava } from '../auth';
 /** Connects Strava at identity (id.dundring.com), then comes back to this page. */
 export const ConnectWithStravaButton = () => {
   return (
-    <Link as="button" onClick={() => connectStrava()}>
+    <Link as="button" type="button" onClick={() => connectStrava()}>
       <ConnectWithStravaGraphics />
     </Link>
   );

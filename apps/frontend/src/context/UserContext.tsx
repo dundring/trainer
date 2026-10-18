@@ -80,8 +80,13 @@ export const UserContextProvider = ({
             const [pathname, query] = path!.split('?');
             // Signed in on the way to connecting Strava (see auth.connectStrava).
             if (pathname === auth.connectStravaPath) {
-              const next = new URLSearchParams(query).get('return_to') || '/';
-              window.location.assign(auth.connectStravaUrl(next));
+              const params = new URLSearchParams(query);
+              window.location.assign(
+                auth.connectStravaUrl({
+                  returnTo: params.get('return_to') || '/',
+                  consent: params.has('consent'),
+                })
+              );
               return;
             }
             // New users get a placeholder username and pick their own.
