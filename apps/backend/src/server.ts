@@ -1,4 +1,9 @@
-import { mailService, monitoringService, stravaService } from './services';
+import {
+  identityService,
+  mailService,
+  monitoringService,
+  stravaService,
+} from './services';
 import * as express from 'express';
 import * as WebSocket from 'ws';
 import cors from 'cors';
@@ -52,6 +57,7 @@ const checkEnvConfig = () => {
 
   mailService.checkMailConfig();
   stravaService.checkStravaConfig();
+  identityService.checkIdentityConfig();
   monitoringService.checkMonitoringConfig();
 };
 

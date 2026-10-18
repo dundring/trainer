@@ -263,6 +263,28 @@ export const createMailUserWithRandomUsername = async (mail: string) =>
     return error('Could not create user based on mail');
   }, 5);
 
+const createUser = async (
+  id: string,
+  username: string
+): Promise<
+  Status<User & { fitnessData: FitnessData | null }, 'Could not create user'>
+> => {
+  try {
+    const result = await prisma.user.create({
+      data: { id, username, fitnessData: { create: { ftp: 200 } } },
+      include: { fitnessData: true },
+    });
+    return success(result);
+  } catch (e) {
+    console.error('[db.createUser]', e);
+    return error('Could not create user');
+  }
+};
+
+/** The `dundrer#xxxx` username is a placeholder the user is asked to replace. */
+export const createUserWithRandomUsername = async (id: string) =>
+  retry(() => createUser(id, `dundrer#${generateRandomString(4)}`), 5);
+
 export const getUserWorkouts = async (
   userId: string
 ): Promise<

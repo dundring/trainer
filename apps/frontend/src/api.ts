@@ -1,19 +1,15 @@
 import {
   ApiResponseBody,
-  MailAuthenticationRequestBody,
-  StravaAuthenticationRequestBody,
-  AuthenticationResponseBody,
   FeedbackRequestBody,
   GetWorkoutResponseBody,
-  LoginResponseBody,
-  MailLoginRequestBody,
-  RequestLoginLinkMailResponseBody,
+  MeResponseBody,
   StravaUpload,
   UserUpdateRequestBody,
   UserUpdateResponseBody,
   WorkoutRequestBody,
   WorkoutsResponseBody,
 } from '@dundring/types';
+import { getAccessToken } from './auth';
 import { getEnv } from './utils/environment';
 
 export const domain = location.origin;
@@ -55,9 +51,14 @@ const post = async <T, U>(
   return response.json();
 };
 
+// Without a session the header is left out, and the backend answers 401.
+const authorization = async (): Promise<Record<string, string>> => {
+  const token = await getAccessToken();
+  return token ? { authorization: `Bearer ${token}` } : {};
+};
+
 const authGet = async <T>(
   url: string,
-  token: string,
   abortController?: AbortController
 ): Promise<T> => {
   const response = await fetch(url, {
@@ -65,7 +66,7 @@ const authGet = async <T>(
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      authorization: `Bearer ${token}`,
+      ...(await authorization()),
     },
     signal: abortController?.signal,
   });
@@ -75,7 +76,6 @@ const authGet = async <T>(
 
 const authDelete = async <T, U>(
   url: string,
-  token: string,
   abortController?: AbortController
 ): Promise<T> => {
   const response = await fetch(url, {
@@ -83,7 +83,7 @@ const authDelete = async <T, U>(
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      authorization: `Bearer ${token}`,
+      ...(await authorization()),
     },
     signal: abortController?.signal,
   });
@@ -93,7 +93,6 @@ const authDelete = async <T, U>(
 
 const authPost = async <T, U>(
   url: string,
-  token: string,
   body: U,
   abortController?: AbortController
 ): Promise<T> => {
@@ -102,7 +101,7 @@ const authPost = async <T, U>(
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      authorization: `Bearer ${token}`,
+      ...(await authorization()),
     },
     body: JSON.stringify(body),
     signal: abortController?.signal,
@@ -111,48 +110,24 @@ const authPost = async <T, U>(
   return response.json();
 };
 
-export const requestLoginLinkMail = async (data: MailLoginRequestBody) => {
-  return post<
-    ApiResponseBody<RequestLoginLinkMailResponseBody>,
-    MailLoginRequestBody
-  >(`${httpUrl}/auth/mail/login`, data);
+export const getMe = async () =>
+  authGet<ApiResponseBody<MeResponseBody>>(`${httpUrl}/me`);
+
+export interface Userinfo {
+  email: string | null;
+  strava: { athlete_id: string; scopes: string[] } | null;
+}
+
+/** The signed-in user at identity: email and Strava connection. */
+export const getUserinfo = async (): Promise<Userinfo | null> => {
+  const response = await fetch(`${getEnv().identityUrl}/userinfo`, {
+    headers: await authorization(),
+  });
+  return response.ok ? response.json() : null;
 };
 
-export const authenticateMailLogin = async (
-  body: MailAuthenticationRequestBody
-) => {
-  return post<
-    ApiResponseBody<AuthenticationResponseBody>,
-    MailAuthenticationRequestBody
-  >(`${httpUrl}/auth/mail/authenticate`, body);
-};
-
-export const authenticateStravaLogin = async (
-  body: StravaAuthenticationRequestBody
-) => {
-  return post<
-    ApiResponseBody<AuthenticationResponseBody>,
-    StravaAuthenticationRequestBody
-  >(`${httpUrl}/auth/strava/authenticate`, body);
-};
-
-export const validateToken = async (
-  token: string,
-  abortController: AbortController
-) => {
-  return authPost<ApiResponseBody<LoginResponseBody>, {}>(
-    `${httpUrl}/auth/token/validate`,
-    token,
-    {},
-    abortController
-  );
-};
-
-export const fetchMyWorkouts = async (token: string) => {
-  return authGet<ApiResponseBody<WorkoutsResponseBody>>(
-    `${httpUrl}/workouts`,
-    token
-  );
+export const fetchMyWorkouts = async () => {
+  return authGet<ApiResponseBody<WorkoutsResponseBody>>(`${httpUrl}/workouts`);
 };
 
 export const getWorkout = async (workoutId: string) => {
@@ -161,39 +136,27 @@ export const getWorkout = async (workoutId: string) => {
   );
 };
 
-export const deleteWorkout = async (token: string, workoutId: string) => {
+export const deleteWorkout = async (workoutId: string) => {
   return authDelete<ApiResponseBody<string>, any>(
-    `${httpUrl}/workouts/${workoutId}`,
-    token
+    `${httpUrl}/workouts/${workoutId}`
   );
 };
 
-export const saveWorkout = async (
-  token: string,
-  workout: WorkoutRequestBody
-) => {
+export const saveWorkout = async (workout: WorkoutRequestBody) => {
   return authPost<ApiResponseBody<WorkoutsResponseBody>, WorkoutRequestBody>(
     `${httpUrl}/workouts`,
-    token,
     workout
   );
 };
 
-export const updateUser = async (
-  token: string,
-  data: { ftp: number; username: string }
-) => {
+export const updateUser = async (data: { ftp: number; username: string }) => {
   return authPost<
     ApiResponseBody<UserUpdateResponseBody>,
     UserUpdateRequestBody
-  >(`${httpUrl}/me`, token, data);
+  >(`${httpUrl}/me`, data);
 };
 
-export const uploadActivity = async (
-  token: string,
-  file: string,
-  name: string | null
-) => {
+export const uploadActivity = async (file: string, name: string | null) => {
   const formData = new FormData();
   formData.append(
     'file',
@@ -206,12 +169,11 @@ export const uploadActivity = async (
     url.searchParams.append('name', name);
   }
 
-  return authPostFormData<ApiResponseBody<StravaUpload>>(url, token, formData);
+  return authPostFormData<ApiResponseBody<StravaUpload>>(url, formData);
 };
 
 const authPostFormData = async <T>(
   url: URL,
-  token: string,
   body: FormData,
   abortController?: AbortController
 ): Promise<T> => {
@@ -219,7 +181,7 @@ const authPostFormData = async <T>(
     method: 'POST',
     headers: {
       Accept: 'application/json',
-      authorization: `Bearer ${token}`,
+      ...(await authorization()),
     },
     body,
     signal: abortController?.signal,

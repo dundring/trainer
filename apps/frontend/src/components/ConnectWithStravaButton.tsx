@@ -1,16 +1,12 @@
 import * as React from 'react';
 import { chakra, forwardRef, ImageProps, Link } from '@chakra-ui/react';
 import logo from '../assets/connect-with-strava.svg';
-import { getEnv } from '../utils/environment';
+import { connectStrava } from '../auth';
 
-export const getStravaAuthorizeUrl = (params: { forcePrompt: boolean }) => {
-  const clientId = getEnv().stravaClientId;
-  return `https://www.strava.com/oauth/authorize?client_id=${clientId}&redirect_uri=${location.origin}/auth/strava&response_type=code&scope=read,activity:write&approval_prompt=${params.forcePrompt ? 'force' : 'auto'}`;
-};
-
+/** Connects Strava at identity (id.dundring.com), then comes back to this page. */
 export const ConnectWithStravaButton = () => {
   return (
-    <Link href={getStravaAuthorizeUrl({ forcePrompt: false })}>
+    <Link as="button" onClick={() => connectStrava()}>
       <ConnectWithStravaGraphics />
     </Link>
   );

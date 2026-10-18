@@ -2,7 +2,7 @@ import { Scopes, UserCreationStrava } from '@dundring/types';
 
 require('dotenv').config();
 import * as db from '../db';
-import { isSuccess } from '@dundring/utils';
+import { isError, isSuccess } from '@dundring/utils';
 import { monitoringService } from '.';
 
 export const getUser = async (query: { username: string } | { id: string }) =>
@@ -63,4 +63,18 @@ export const updateRefreshTokenAndScopes = async (data: {
   scopes: Scopes;
 }) => {
   return db.updateStravaRefreshTokenAndScopes(data);
+};
+
+/** The trainer user for an identity user, created on their first sign-in. */
+export const getOrCreateUser = async (id: string) => {
+  const existing = await db.getUser({ id });
+  if (isError(existing) && existing.type === 'User not found') {
+    const created = await db.createUserWithRandomUsername(id);
+    if (isSuccess(created)) {
+      monitoringService.log(`New user: *${id}*`);
+    }
+    // Read it back either way: a parallel request may have created it.
+    return db.getUser({ id });
+  }
+  return existing;
 };

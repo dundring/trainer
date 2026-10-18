@@ -54,6 +54,11 @@ export interface LoginResponseBody {
   } | null;
 }
 
+export interface MeResponseBody {
+  username: string;
+  ftp: number;
+}
+
 export interface UserUpdateRequestBody {
   ftp?: number;
   username?: string;
@@ -62,7 +67,6 @@ export interface UserUpdateRequestBody {
 export interface UserUpdateResponseBody {
   ftp: number;
   username: string;
-  accessToken: string;
 }
 
 export interface WorkoutsResponseBody {
