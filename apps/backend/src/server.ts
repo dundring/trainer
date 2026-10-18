@@ -43,12 +43,6 @@ const checkEnvConfig = () => {
     );
   }
 
-  if (!process.env.TOKEN_SECRET) {
-    console.log(
-      '[.env]: No token secret provided; using 12345. Override this by setting the TOKEN_SECRET in the environment config.'
-    );
-  }
-
   if (!process.env.REDIS_URL) {
     console.log(
       '[.env]: No Redis URL provided; using `redis://127.0.0.1:6380`:. Override this by setting the PORT in the environment config.'
