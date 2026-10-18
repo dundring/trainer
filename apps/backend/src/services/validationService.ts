@@ -1,20 +1,6 @@
 import { Request, Response } from 'express';
-import { ApiResponseBody, ApiStatus, Status } from '@dundring/types';
-import crypto from 'crypto';
-import * as redis from '../redis';
+import { ApiResponseBody, ApiStatus } from '@dundring/types';
 import { identityService } from '.';
-
-export const generateMailToken = async (mail: string) => {
-  const token = crypto.randomUUID();
-  redis.setMailToken(token, mail);
-  return token;
-};
-
-export const getMailTokenData = async (
-  token: string
-): Promise<Status<string, 'Mail token not found'>> => {
-  return redis.getMailToken(token);
-};
 
 /**
  * Verifies the identity access token in the Authorization header. Returns the

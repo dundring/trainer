@@ -1,5 +1,5 @@
 import { Member, Room, Status, WebSocketResponse } from '@dundring/types';
-import { error, hours, isSuccess, success } from '@dundring/utils';
+import { error, isSuccess, success } from '@dundring/utils';
 import { createClient } from 'redis';
 import * as websocket from './websocket';
 import { logger } from './logger';
@@ -127,21 +127,5 @@ export const deleteRoom = async (
 export const roomExists = async (roomId: string) =>
   (await redisClient.exists(toRoomKey(roomId))) > 0;
 
-export const setMailToken = async (token: string, mail: string) => {
-  // expire after 1 hour
-  await redisClient.set(toMailTokenKey(token), mail, { PX: hours(1) });
-};
-
-export const getMailToken = async (
-  token: string
-): Promise<Status<string, 'Mail token not found'>> => {
-  const mail = await redisClient.get(toMailTokenKey(token));
-
-  if (mail) return success(mail);
-
-  return error('Mail token not found');
-};
-
 const toRoomKey = (roomId: string) => `room-${roomId}`;
 const toUserKey = (username: string) => `user-${username}`;
-const toMailTokenKey = (token: string) => `mailToken-${token}`;

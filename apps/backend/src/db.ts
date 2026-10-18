@@ -95,38 +95,6 @@ export const updateUser = async (
   }
 };
 
-export const getUserByMail = async (
-  mail: string
-): Promise<
-  Status<
-    User & {
-      stravaAuthentication: StravaAuthentication | null;
-      mailAuthentication: MailAuthentication | null;
-    },
-    'User not found' | 'Something went wrong reading from database'
-  >
-> => {
-  try {
-    const result = await prisma.mailAuthentication.findUnique({
-      where: { mail },
-      select: {
-        user: {
-          include: { stravaAuthentication: true, mailAuthentication: true },
-        },
-      },
-    });
-
-    if (!result) {
-      return error('User not found');
-    }
-
-    return success(result.user);
-  } catch (e) {
-    console.error('[db.getUserByMail]', e);
-    return error('Something went wrong reading from database');
-  }
-};
-
 export const getUserByStravaId = async (
   athleteId: number
 ): Promise<
@@ -159,46 +127,6 @@ export const getUserByStravaId = async (
   }
 };
 
-const createUserFromMail = async (
-  mail: string,
-  username: string
-): Promise<
-  Status<
-    User & {
-      mailAuthentication: MailAuthentication | null;
-      stravaAuthentication: StravaAuthentication | null;
-    },
-    | 'MailAuthentication not included in data'
-    | 'Could not create user from mail'
-  >
-> => {
-  const result = await prisma.user.create({
-    data: {
-      username: username,
-      fitnessData: { create: { ftp: 200 } },
-      mailAuthentication: {
-        create: {
-          mail: mail,
-        },
-      },
-    },
-    select: {
-      id: true,
-      username: true,
-      mailAuthentication: true,
-      stravaAuthentication: true,
-    },
-  });
-
-  if (!result.mailAuthentication)
-    return error('MailAuthentication not included in data');
-
-  if (result) {
-    return success(result);
-  }
-
-  return error('Could not create user from mail');
-};
 const createUserFromStrava = async (
   body: UserCreationStrava,
   username: string
@@ -250,17 +178,6 @@ export const createStravaUserWithRandomUsername = async (
     if (isSuccess(ret)) return ret;
 
     return error('Could not create user based on Strava id');
-  }, 5);
-
-export const createMailUserWithRandomUsername = async (mail: string) =>
-  retry(async () => {
-    const ret = await createUserFromMail(
-      mail,
-      `dundrer#${generateRandomString(4)}`
-    );
-    if (isSuccess(ret)) return ret;
-
-    return error('Could not create user based on mail');
   }, 5);
 
 const createUser = async (

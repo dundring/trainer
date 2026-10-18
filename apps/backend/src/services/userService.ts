@@ -23,7 +23,6 @@ export const updateUser = async (
   return ret;
 };
 
-export const getUserByMail = async (mail: string) => db.getUserByMail(mail);
 export const getUserByStravaId = async (athleteId: number) =>
   db.getUserByStravaId(athleteId);
 
@@ -42,16 +41,6 @@ export const createUserFromStrava = async (body: UserCreationStrava) => {
     const athleteId = ret.data.stravaAuthentication?.athleteId;
     monitoringService.log(
       `New user: *${ret.data.id}* created with Strava: athlete id: https://strava.com/athletes/${athleteId}`
-    );
-  }
-  return ret;
-};
-
-export const createUserFromMail = async (mail: string) => {
-  const ret = await db.createMailUserWithRandomUsername(mail);
-  if (isSuccess(ret)) {
-    monitoringService.log(
-      `New user: *${ret.data.id}* created with mail: ${ret.data.mailAuthentication?.mail}`
     );
   }
   return ret;
