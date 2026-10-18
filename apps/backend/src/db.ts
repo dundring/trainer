@@ -185,6 +185,7 @@ const createUserFromMail = async (
     select: {
       id: true,
       username: true,
+      identityId: true,
       mailAuthentication: true,
       stravaAuthentication: true,
     },
@@ -225,6 +226,7 @@ const createUserFromStrava = async (
     select: {
       id: true,
       username: true,
+      identityId: true,
       stravaAuthentication: true,
     },
   });
