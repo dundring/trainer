@@ -1,5 +1,3 @@
-import { Scopes, UserCreationStrava } from '@dundring/types';
-
 require('dotenv').config();
 import * as db from '../db';
 import { isError, isSuccess } from '@dundring/utils';
@@ -23,9 +21,6 @@ export const updateUser = async (
   return ret;
 };
 
-export const getUserByStravaId = async (athleteId: number) =>
-  db.getUserByStravaId(athleteId);
-
 export const getUserWorkoutsByUserId = async (userId: string) =>
   db.getUserWorkouts(userId);
 
@@ -34,25 +29,6 @@ export const updateUserFtp = async (userId: string, ftp: number) =>
 
 export const getUserFitnessData = async (userId: string) =>
   db.getFitnessData(userId);
-
-export const createUserFromStrava = async (body: UserCreationStrava) => {
-  const ret = await db.createStravaUserWithRandomUsername(body);
-  if (isSuccess(ret)) {
-    const athleteId = ret.data.stravaAuthentication?.athleteId;
-    monitoringService.log(
-      `New user: *${ret.data.id}* created with Strava: athlete id: https://strava.com/athletes/${athleteId}`
-    );
-  }
-  return ret;
-};
-
-export const updateRefreshTokenAndScopes = async (data: {
-  athleteId: number;
-  refreshToken: string;
-  scopes: Scopes;
-}) => {
-  return db.updateStravaRefreshTokenAndScopes(data);
-};
 
 /** The trainer user for an identity user, created on their first sign-in. */
 export const getOrCreateUser = async (id: string) => {

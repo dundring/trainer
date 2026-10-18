@@ -1,4 +1,4 @@
-import { identityService, monitoringService, stravaService } from './services';
+import { identityService, monitoringService } from './services';
 import * as express from 'express';
 import * as WebSocket from 'ws';
 import cors from 'cors';
@@ -44,7 +44,6 @@ const checkEnvConfig = () => {
     );
   }
 
-  stravaService.checkStravaConfig();
   identityService.checkIdentityConfig();
   monitoringService.checkMonitoringConfig();
 };

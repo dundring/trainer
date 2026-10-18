@@ -51,11 +51,6 @@ export interface WorkoutRequestBody {
   workout: Workout;
 }
 
-export interface Scopes {
-  read: boolean;
-  activityWrite: boolean;
-}
-
 export interface FeedbackRequestBody {
   message: string;
   mail: string | null;

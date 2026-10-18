@@ -1,9 +1,4 @@
-import {
-  Scopes,
-  Status,
-  UserCreationStrava,
-  WorkoutBase,
-} from '@dundring/types';
+import { Status, WorkoutBase } from '@dundring/types';
 import {
   error,
   generateRandomString,
@@ -94,91 +89,6 @@ export const updateUser = async (
     return error('Something went wrong writing to database');
   }
 };
-
-export const getUserByStravaId = async (
-  athleteId: number
-): Promise<
-  Status<
-    User & {
-      stravaAuthentication: StravaAuthentication | null;
-      mailAuthentication: MailAuthentication | null;
-    },
-    'User not found' | 'Something went wrong reading from database'
-  >
-> => {
-  try {
-    const result = await prisma.stravaAuthentication.findUnique({
-      where: { athleteId },
-      select: {
-        user: {
-          include: { stravaAuthentication: true, mailAuthentication: true },
-        },
-      },
-    });
-
-    if (!result) {
-      return error('User not found');
-    }
-
-    return success(result.user);
-  } catch (e) {
-    console.error('[db.getUserByMail]', e);
-    return error('Something went wrong reading from database');
-  }
-};
-
-const createUserFromStrava = async (
-  body: UserCreationStrava,
-  username: string
-): Promise<
-  Status<
-    User & { stravaAuthentication: StravaAuthentication | null },
-    | 'StravaAuthentication not included in data'
-    | 'Could not create user from Strava id'
-  >
-> => {
-  const result = await prisma.user.create({
-    data: {
-      username: username,
-      fitnessData: { create: { ftp: 200 } },
-      stravaAuthentication: {
-        create: {
-          athleteId: body.athleteId,
-          refreshToken: body.refreshToken,
-          readScope: body.scopes.read,
-          activityWriteScope: body.scopes.activityWrite,
-        },
-      },
-    },
-    select: {
-      id: true,
-      username: true,
-      stravaAuthentication: true,
-    },
-  });
-
-  if (!result.stravaAuthentication)
-    return error('StravaAuthentication not included in data');
-
-  if (result) {
-    return success(result);
-  }
-
-  return error('Could not create user from Strava id');
-};
-
-export const createStravaUserWithRandomUsername = async (
-  body: UserCreationStrava
-) =>
-  retry(async () => {
-    const ret = await createUserFromStrava(
-      body,
-      `dundrer#${generateRandomString(4)}`
-    );
-    if (isSuccess(ret)) return ret;
-
-    return error('Could not create user based on Strava id');
-  }, 5);
 
 const createUser = async (
   id: string,
@@ -375,29 +285,5 @@ export const upsertWorkout = async (
   } catch (e) {
     console.error('[db.upsertWorkout]', e);
     return error('Something went wrong while upserting workout');
-  }
-};
-
-export const updateStravaRefreshTokenAndScopes = async (data: {
-  athleteId: number;
-  refreshToken: string;
-  scopes: Scopes;
-}): Promise<
-  Status<StravaAuthentication, 'Something went wrong while writing to database'>
-> => {
-  try {
-    const result = await prisma.stravaAuthentication.update({
-      data: {
-        refreshToken: data.refreshToken,
-        readScope: data.scopes.read,
-        activityWriteScope: data.scopes.activityWrite,
-      },
-      where: { athleteId: data.athleteId },
-    });
-
-    return success(result);
-  } catch (e) {
-    console.error('[db.updateStravaRefreshToken]:', e);
-    return error('Something went wrong while writing to database');
   }
 };
