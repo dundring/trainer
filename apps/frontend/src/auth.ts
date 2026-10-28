@@ -1,17 +1,33 @@
 import { getEnv, identityClientId } from './utils/environment';
 
 // Sign-in through identity (id.dundring.com) with OAuth 2.0 authorization code
-// + PKCE. The access token lives in memory; the refresh token in localStorage,
-// so a new tab or a reload stays signed in like before.
+// + PKCE. Both tokens live in localStorage, so a new tab or a reload stays
+// signed in like before, and reuses the access token instead of refreshing.
 
 export const callbackPath = '/auth/callback';
 const refreshTokenKey = 'identity_refresh_token';
+const accessTokenKey = 'identity_access_token';
 
-let accessToken: { value: string; expiresAt: number } | null = null;
+interface AccessToken {
+  value: string;
+  expiresAt: number;
+}
 
 const readRefreshToken = () => {
   try {
     return localStorage.getItem(refreshTokenKey);
+  } catch {
+    return null;
+  }
+};
+
+/** The stored access token, unless it expires within a minute. */
+const readFreshAccessToken = (): string | null => {
+  try {
+    const token: AccessToken | null = JSON.parse(
+      localStorage.getItem(accessTokenKey) ?? 'null'
+    );
+    return token && token.expiresAt > Date.now() + 60_000 ? token.value : null;
   } catch {
     return null;
   }
@@ -64,11 +80,13 @@ const storeTokens = (tokens: {
   refresh_token: string;
   expires_in: number;
 }) => {
-  accessToken = {
+  const accessToken: AccessToken = {
     value: tokens.access_token,
     expiresAt: Date.now() + tokens.expires_in * 1000,
   };
+  localStorage.setItem(accessTokenKey, JSON.stringify(accessToken));
   localStorage.setItem(refreshTokenKey, tokens.refresh_token);
+  return accessToken.value;
 };
 
 const requestTokens = (params: Record<string, string>) =>
@@ -120,7 +138,9 @@ let refreshing: Promise<string | null> | null = null;
 // treats a reused one as stolen, which would sign every tab out.
 const refresh = () => {
   refreshing ??= withLock(async () => {
-    // Read inside the lock: another tab may have just rotated it.
+    // Read inside the lock: another tab may have just refreshed.
+    const accessToken = readFreshAccessToken();
+    if (accessToken) return accessToken;
     const refreshToken = readRefreshToken();
     if (!refreshToken) return null;
 
@@ -133,8 +153,7 @@ const refresh = () => {
       if (response.status === 400 || response.status === 401) logout();
       return null;
     }
-    storeTokens(await response.json());
-    return accessToken!.value;
+    return storeTokens(await response.json());
   }).finally(() => {
     refreshing = null;
   });
@@ -146,15 +165,12 @@ const withLock = async <T>(f: () => Promise<T>): Promise<T> =>
 
 /** A valid access token (refreshed when about to expire), or null when signed out. */
 export const getAccessToken = async (): Promise<string | null> => {
-  if (accessToken && accessToken.expiresAt > Date.now() + 60_000) {
-    return accessToken.value;
-  }
-  return refresh().catch(() => null);
+  return readFreshAccessToken() ?? refresh().catch(() => null);
 };
 
 /** Signs out of the trainer. The identity session stays, so signing in again is quick. */
 export const logout = () => {
-  accessToken = null;
+  localStorage.removeItem(accessTokenKey);
   localStorage.removeItem(refreshTokenKey);
 };
 
