@@ -168,10 +168,24 @@ export const getAccessToken = async (): Promise<string | null> => {
   return readFreshAccessToken() ?? refresh().catch(() => null);
 };
 
-/** Signs out of the trainer. The identity session stays, so signing in again is quick. */
+/** Drops the trainer's tokens. The identity session stays (see `signOut`). */
 export const logout = () => {
   localStorage.removeItem(accessTokenKey);
   localStorage.removeItem(refreshTokenKey);
+};
+
+/**
+ * Signs out, also of identity: otherwise the next sign-in finds identity's
+ * session and silently signs the same user back in. Identity's /logout also
+ * revokes the refresh tokens minted under that session (so dundring.com in
+ * the same browser is signed out too), then comes back to the start page.
+ */
+export const signOut = () => {
+  logout();
+  const url = new URL(`${getEnv().identityUrl}/logout`);
+  url.searchParams.set('client_id', identityClientId);
+  url.searchParams.set('post_logout_redirect_uri', `${location.origin}/`);
+  location.assign(url.toString());
 };
 
 /** Not a page: marks a sign-in whose callback continues to identity's connect page. */

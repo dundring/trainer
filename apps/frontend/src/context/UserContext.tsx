@@ -139,8 +139,8 @@ export const UserContextProvider = ({
   );
 
   const signOut = () => {
-    auth.logout();
     setUser(defaultUser);
+    auth.signOut();
   };
 
   const [localWorkouts, setLocalWorkouts] = React.useState<Workout[]>(

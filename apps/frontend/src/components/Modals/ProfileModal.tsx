@@ -298,14 +298,9 @@ export const ProfileModalContent = ({ user, onClose }: Props) => {
               variant="outline"
               colorScheme="red"
               onClick={() => {
-                toast({
-                  title: `Signed out of ${user.username}`,
-                  isClosable: true,
-                  duration: 5000,
-                  status: 'success',
-                });
-                signOut();
                 onClose();
+                // Leaves the page for identity's sign-out and comes back.
+                signOut();
               }}
             >
               Sign out
